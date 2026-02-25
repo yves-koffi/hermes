@@ -69,3 +69,8 @@ If you want to learn more about building native executables, please consult <htt
 Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+
+
+### Important runtime note
+
+INSERT now requires X-Account-Id header (UUID) to resolve current binding/account context.

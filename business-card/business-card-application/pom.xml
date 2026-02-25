@@ -22,6 +22,16 @@
             <artifactId>business-card-domain</artifactId>
             <version>${app.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cloud.arrah</groupId>
+            <artifactId>shared-domain</artifactId>
+            <version>${app.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cloud.arrah</groupId>
+            <artifactId>image-server-application</artifactId>
+            <version>${app.version}</version>
+        </dependency>
         <!-- Validation -->
         <dependency>
             <groupId>jakarta.validation</groupId>
@@ -36,7 +46,10 @@
             <groupId>io.quarkiverse.resteasy-problem</groupId>
             <artifactId>quarkus-resteasy-problem</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

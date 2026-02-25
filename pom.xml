@@ -7,6 +7,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>app</module>
+        <module>image-server</module>
         <module>shared</module>
         <module>life-ping</module>
         <module>business-card</module>
@@ -30,6 +31,7 @@
         <lombok.version>1.18.42</lombok.version>
         <!-- Monitoring -->
         <slf4j-jboss-logmanager.version>2.0.2.Final</slf4j-jboss-logmanager.version>
+        <thumbnailator.version>0.4.20</thumbnailator.version>
     </properties>
 
     <dependencyManagement>
@@ -129,6 +131,27 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>1.6.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>1.6.3</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.coobird</groupId>
+                <artifactId>thumbnailator</artifactId>
+                <version>${thumbnailator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-reactive-routes</artifactId>
+                <version>${quarkus.platform.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -22,6 +22,11 @@
             <artifactId>business-card-application</artifactId>
             <version>${app.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cloud.arrah</groupId>
+            <artifactId>business-card-domain</artifactId>
+            <version>${app.version}</version>
+        </dependency>
         <!-- Validation -->
         <dependency>
             <groupId>jakarta.validation</groupId>
@@ -49,6 +54,7 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
         </dependency>
+
         <!-- Base de données -->
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -72,6 +78,18 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
         </dependency>
     </dependencies>
     <build>

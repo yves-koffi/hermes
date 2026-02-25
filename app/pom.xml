@@ -47,16 +47,17 @@
             <version>${app.version}</version>
         </dependency>
         <dependency>
+            <groupId>cloud.arrah</groupId>
+            <artifactId>image-server-infrastructure</artifactId>
+            <version>${app.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-jwt</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-jwt-build</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-arc</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.resteasy-problem</groupId>

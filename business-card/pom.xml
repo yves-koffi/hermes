@@ -8,7 +8,6 @@
         <artifactId>hermes</artifactId>
         <version>1.0.0</version>
     </parent>
-
     <artifactId>business-card</artifactId>
     <packaging>pom</packaging>
     <modules>
