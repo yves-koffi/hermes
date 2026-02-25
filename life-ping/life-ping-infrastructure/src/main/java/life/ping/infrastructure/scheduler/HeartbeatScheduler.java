@@ -11,7 +11,7 @@ public class HeartbeatScheduler {
 
 
     @Scheduled(
-            identity = "image-cache-cleanup",
+            identity = "heartbeat-cache-cleanup",
             cron = "0 0 * * * ?",
             concurrentExecution = Scheduled.ConcurrentExecution.SKIP
     )

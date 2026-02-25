@@ -12,7 +12,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class TriggerEmergencyAlertScheduler {
 
     @Scheduled(
-            identity = "image-cache-cleanup",
+            identity = "trigger-emergency-alert",
             cron = "0 0 * * * ?",
             concurrentExecution = Scheduled.ConcurrentExecution.SKIP
     )
