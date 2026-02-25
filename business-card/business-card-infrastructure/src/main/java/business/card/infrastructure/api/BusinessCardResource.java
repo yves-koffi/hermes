@@ -10,6 +10,7 @@ import business.card.infrastructure.api.mapper.BusinessCardRequestMapper;
 import business.card.infrastructure.api.dto.BusinessCardRequest;
 import business.card.infrastructure.api.dto.BusinessCardResponse;
 import io.smallrye.mutiny.Uni;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +24,15 @@ import java.util.UUID;
 @Path("business-card")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@RequiredArgsConstructor
 class BusinessCardResource {
 
-    private final PullUseCase pullUseCase;
-    private final PushUseCase pushUseCase;
-    private final SyncUseCase syncUseCase;
-    private final UploadImageUseCase uploadImageUseCase;
-    private final FindImageUseCase findImageUseCase;
-    private final BusinessCardRequestMapper businessCardRequestMapper;
+    @Inject
+     PullUseCase pullUseCase;
+    @Inject PushUseCase pushUseCase;
+    @Inject SyncUseCase syncUseCase;
+    @Inject UploadImageUseCase uploadImageUseCase;
+    @Inject FindImageUseCase findImageUseCase;
+    @Inject BusinessCardRequestMapper businessCardRequestMapper;
 
     @GET
     @Path("pull")

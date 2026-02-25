@@ -6,6 +6,7 @@ import business.card.infrastructure.api.dto.AccountResponse;
 import business.card.infrastructure.api.dto.LoginRequest;
 import business.card.infrastructure.api.mapper.AccountRequestMapper;
 import io.smallrye.mutiny.Uni;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -18,12 +19,12 @@ import org.jboss.resteasy.reactive.RestResponse;
 @Path("account")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@RequiredArgsConstructor
 class AccountResource {
 
-    private final AttemptUseCase attemptUseCase;
-    private final CurrentAccountUseCase currentAccountUseCase;
-    private final AccountRequestMapper accountRequestMapper;
+    @Inject
+    AttemptUseCase attemptUseCase;
+    @Inject  CurrentAccountUseCase currentAccountUseCase;
+    @Inject AccountRequestMapper accountRequestMapper;
 
     @POST
     @Path("attempt")
