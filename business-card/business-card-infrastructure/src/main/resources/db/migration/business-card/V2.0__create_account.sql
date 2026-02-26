@@ -10,9 +10,9 @@ CREATE TABLE accounts
     apple_id     VARCHAR(255),
     provider     VARCHAR(24) DEFAULT 'google'
         CHECK (provider IN ('google', 'apple')),
-    activated_at TIMESTAMP(0) WITHOUT TIME ZONE,
-    created_at   TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT now(),
-    updated_at   TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT now()
+    activated_at TIMESTAMPTZ ,
+    created_at       TIMESTAMPTZ DEFAULT now(),
+    updated_at       TIMESTAMPTZ DEFAULT now()
 );
 
 

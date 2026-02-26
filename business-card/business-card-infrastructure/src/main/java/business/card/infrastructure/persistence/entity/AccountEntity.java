@@ -20,7 +20,7 @@ import java.time.OffsetDateTime;
 public class AccountEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
     public UUID id;
 
     @Column(nullable = false, length = 255)
