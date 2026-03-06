@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record DailyCheckin(
         UUID id,
-        UUID userId,
+        UUID accountId,
         LocalDate localDate,
         LocalDateTime checkedInAt,
         String source

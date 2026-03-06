@@ -24,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>cloud.arrah</groupId>
-            <artifactId>shared-domain</artifactId>
+            <artifactId>shared-application</artifactId>
             <version>${app.version}</version>
         </dependency>
         <dependency>

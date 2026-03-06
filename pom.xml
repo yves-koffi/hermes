@@ -11,18 +11,20 @@
         <module>shared</module>
         <module>life-ping</module>
         <module>business-card</module>
+        <module>store-purchase</module>
+        <module>account</module>
     </modules>
 
     <properties>
         <app.version>${project.version}</app.version>
-
-        <compiler-plugin.version>3.14.1</compiler-plugin.version>
+        <compiler-plugin.version>3.15.0</compiler-plugin.version>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.31.2</quarkus.platform.version>
+<!--        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>-->
+        <quarkus.platform.version>3.32.1</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
 
@@ -32,6 +34,8 @@
         <!-- Monitoring -->
         <slf4j-jboss-logmanager.version>2.0.2.Final</slf4j-jboss-logmanager.version>
         <thumbnailator.version>0.4.20</thumbnailator.version>
+        <google.api.client.version>2.9.0</google.api.client.version>
+        <app.store.server.library.version>4.0.0</app.store.server.library.version>
     </properties>
 
     <dependencyManagement>
@@ -153,7 +157,19 @@
                 <artifactId>quarkus-reactive-routes</artifactId>
                 <version>${quarkus.platform.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.apple.itunes.storekit</groupId>
+                <artifactId>app-store-server-library</artifactId>
+                <version>${app.store.server.library.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.api-client</groupId>
+                <artifactId>google-api-client</artifactId>
+                <version>${google.api.client.version}</version>
+            </dependency>
         </dependencies>
+
     </dependencyManagement>
 
     <dependencies>
@@ -223,8 +239,7 @@
                     <configuration>
                         <argLine>@{argLine}</argLine>
                         <systemPropertyVariables>
-                            <native.image.path>${project.build.directory}/${project.build.finalName}-runner
-                            </native.image.path>
+                            <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
                             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                             <maven.home>${maven.home}</maven.home>
                         </systemPropertyVariables>

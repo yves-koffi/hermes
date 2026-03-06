@@ -1,5 +1,6 @@
 package shared.domain.exception;
 
+
 import jakarta.ws.rs.core.Response;
 
 import java.util.Map;

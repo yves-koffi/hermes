@@ -22,10 +22,10 @@ import java.util.UUID;
 @Table(
         name = "daily_checkins",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_daily_checkins_user_id_local_date", columnNames = {"user_id", "local_date"})
+                @UniqueConstraint(name = "uk_daily_checkins_account_id_local_date", columnNames = {"account_id", "local_date"})
         },
         indexes = {
-                @Index(name = "idx_daily_checkin_user_date", columnList = "user_id, local_date"),
+                @Index(name = "idx_daily_checkin_account_date", columnList = "account_id, local_date"),
                 @Index(name = "idx_daily_checkin_checked_at", columnList = "checked_in_at")
         }
 )
@@ -40,8 +40,8 @@ public class DailyCheckinEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @Column(name = "account_id", nullable = false)
+    private UUID accountId;
 
     @Column(name = "local_date", nullable = false)
     private LocalDate localDate;

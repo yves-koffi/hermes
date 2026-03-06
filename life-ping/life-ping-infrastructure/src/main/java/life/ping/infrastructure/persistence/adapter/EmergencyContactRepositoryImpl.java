@@ -39,6 +39,23 @@ public class EmergencyContactRepositoryImpl implements EmergencyContactRepositor
     }
 
     @Override
+    public Uni<List<EmergencyContact>> findByAccountId(UUID accountId) {
+        return emergencyContactEntityRepository.findByAccountId(accountId)
+                .map(entities -> entities.stream().map(emergencyContactMapper::toDomain).toList());
+    }
+
+    @Override
+    public Uni<Integer> updateContact(EmergencyContact emergencyContact) {
+        return emergencyContactEntityRepository.updateContact(
+                emergencyContact.id(),
+                emergencyContact.name(),
+                emergencyContact.email(),
+                emergencyContact.language(),
+                emergencyContact.updatedAt()
+        );
+    }
+
+    @Override
     public Uni<List<EmergencyContact>> findAll() {
         return emergencyContactEntityRepository.listAll()
                 .map(entities -> entities.stream().map(emergencyContactMapper::toDomain).toList());

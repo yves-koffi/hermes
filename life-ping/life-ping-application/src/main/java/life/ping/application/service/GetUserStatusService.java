@@ -1,5 +1,6 @@
 package life.ping.application.service;
 
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import life.ping.application.usecase.GetUserStatusUseCase;
 
@@ -7,7 +8,7 @@ import life.ping.application.usecase.GetUserStatusUseCase;
 public class GetUserStatusService implements GetUserStatusUseCase {
 
     @Override
-    public Output handle(Input in) {
+    public Uni<Output> handle(Input in) {
         // TODO: implement use case
         return null;
     }

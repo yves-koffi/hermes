@@ -1,0 +1,25 @@
+{
+  "version": string,
+  "packageName": string,
+  "eventTimeMillis": long,
+  "oneTimeProductNotification": {
+    "version": string,
+    "notificationType": int,
+    "purchaseToken": string,
+    "sku": string
+  },
+  "subscriptionNotification": {
+    "version": string,
+    "notificationType": int,
+    "purchaseToken": string
+  },
+  "voidedPurchaseNotification": {
+    "purchaseToken": string,
+    "orderId": string,
+    "productType": int,
+    "refundType": int
+  },
+  "testNotification": {
+    "version": string
+  }
+}

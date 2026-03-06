@@ -14,6 +14,7 @@ CREATE TABLE app_accounts
     check_in_frequency INT          NOT NULL DEFAULT 1440,  -- fréquence de pointage 1 jour
     threshold_period   INT          NOT NULL DEFAULT 2880,  -- période de seuil 2 jours
 
+    missed_streak       INT          NOT NULL DEFAULT 0,            -- série manquée
     last_checkin_at    TIMESTAMP    NULL,                   -- dernière confirmation
     created_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP

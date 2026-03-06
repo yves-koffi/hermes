@@ -20,10 +20,10 @@ import java.util.UUID;
 @Table(
         name = "missed_day_markers",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_missed_day_marker_user_local_date", columnNames = {"user_id", "local_date"})
+                @UniqueConstraint(name = "uk_missed_day_marker_account_local_date", columnNames = {"account_id", "local_date"})
         },
         indexes = {
-                @Index(name = "idx_missed_day_marker_user_id", columnList = "user_id")
+                @Index(name = "idx_missed_day_marker_account_id", columnList = "account_id")
         }
 )
 @Getter
@@ -35,8 +35,8 @@ public class MissedDayMarkerEntity {
     @Id
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @Column(name = "account_id", nullable = false)
+    private UUID accountId;
 
     @Column(name = "local_date", nullable = false)
     private LocalDate localDate;

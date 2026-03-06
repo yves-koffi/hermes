@@ -1,5 +1,6 @@
 package life.ping.application.usecase;
 
+import io.smallrye.mutiny.Uni;
 import life.ping.domain.model.DayStatus;
 
 import java.time.Instant;
@@ -10,9 +11,9 @@ import java.util.UUID;
  */
 public interface GetUserStatusUseCase {
 
-    Output handle(Input in);
+    Uni<Output> handle(Input in);
 
-    record Input(UUID userId) {}
+    record Input(String appUid) {}
 
     record Output(
             DayStatus todayStatus,

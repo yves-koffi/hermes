@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>cloud.arrah</groupId>
-            <artifactId>shared-domain</artifactId>
+            <artifactId>shared-application</artifactId>
             <version>${app.version}</version>
         </dependency>
 
@@ -32,7 +32,14 @@
             <groupId>io.quarkiverse.resteasy-problem</groupId>
             <artifactId>quarkus-resteasy-problem</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-jwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-jwt-build</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

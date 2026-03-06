@@ -5,9 +5,11 @@ import java.util.UUID;
 
 public record UserDevice(
         UUID id,
-        UUID userId,
+        UUID accountId,
         String platform,
         String fcmToken,
-        LocalDateTime lastSeenAt
+        LocalDateTime createdAt,
+        LocalDateTime lastSeenAt,
+        LocalDateTime softDeletedAt
 ) {
 }

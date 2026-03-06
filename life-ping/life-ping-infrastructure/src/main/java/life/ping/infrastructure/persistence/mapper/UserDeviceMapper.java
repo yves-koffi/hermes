@@ -9,16 +9,20 @@ import org.mapstruct.Mapping;
 public interface UserDeviceMapper {
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "accountId", source = "accountId")
     @Mapping(target = "platform", source = "platform")
     @Mapping(target = "fcmToken", source = "fcmToken")
+    @Mapping(target = "createdAt", source = "createdAt")
     @Mapping(target = "lastSeenAt", source = "lastSeenAt")
+    @Mapping(target = "softDeletedAt", source = "softDeletedAt")
     UserDevice toDomain(UserDeviceEntity entity);
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "accountId", source = "accountId")
     @Mapping(target = "platform", source = "platform")
     @Mapping(target = "fcmToken", source = "fcmToken")
+    @Mapping(target = "createdAt", source = "createdAt")
     @Mapping(target = "lastSeenAt", source = "lastSeenAt")
+    @Mapping(target = "softDeletedAt", source = "softDeletedAt")
     UserDeviceEntity toEntity(UserDevice domain);
 }

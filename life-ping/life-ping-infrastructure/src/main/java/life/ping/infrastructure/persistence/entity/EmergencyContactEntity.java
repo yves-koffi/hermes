@@ -20,7 +20,7 @@ import java.util.UUID;
 @Table(
         name = "emergency_contacts",
         uniqueConstraints = {
-                @UniqueConstraint(name = "ux_emergency_contact_user", columnNames = {"user_id"})
+                @UniqueConstraint(name = "ux_emergency_contact_account", columnNames = {"account_id"})
         }
 )
 @Getter
@@ -34,8 +34,8 @@ public class EmergencyContactEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @Column(name = "account_id", nullable = false)
+    private UUID accountId;
 
     @Column(name = "name")
     private String name;

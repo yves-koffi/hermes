@@ -1,5 +1,9 @@
 package life.ping.application.usecase;
 
+import io.smallrye.mutiny.Uni;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import life.ping.domain.model.CheckinSource;
 
 import java.time.Instant;
@@ -12,15 +16,15 @@ import java.util.UUID;
  */
 public interface SyncCheckInsUseCase {
 
-    Output handle(Input in);
+    Uni<Output> handle(@Valid @NotNull Input in);
 
     record Input(
-            UUID userId,
-            List<Item> items
+            @NotNull UUID userId,
+            @NotNull @Size(min = 1) List<@Valid @NotNull Item> items
     ) {}
 
     record Item(
-            LocalDate localDate,
+            @NotNull LocalDate localDate,
             Instant checkedInAt,     // optional
             CheckinSource source     // SYNC
     ) {}

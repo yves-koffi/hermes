@@ -7,6 +7,7 @@
         <groupId>cloud.arrah</groupId>
         <artifactId>life-ping</artifactId>
         <version>1.0.0</version>
+
     </parent>
 
     <artifactId>life-ping-application</artifactId>
@@ -22,6 +23,11 @@
             <artifactId>life-ping-domain</artifactId>
             <version>${app.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cloud.arrah</groupId>
+            <artifactId>shared-application</artifactId>
+            <version>${app.version}</version>
+        </dependency>
         <!-- Validation -->
         <dependency>
             <groupId>jakarta.validation</groupId>
@@ -31,6 +37,10 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-reactive-panache</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.resteasy-problem</groupId>

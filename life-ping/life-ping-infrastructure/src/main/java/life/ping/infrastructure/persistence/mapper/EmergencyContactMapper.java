@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 public interface EmergencyContactMapper {
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "accountId", source = "accountId")
     @Mapping(target = "name", source = "name")
     @Mapping(target = "email", source = "email")
     @Mapping(target = "language", source = "language")
@@ -18,7 +18,7 @@ public interface EmergencyContactMapper {
     EmergencyContact toDomain(EmergencyContactEntity entity);
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "accountId", source = "accountId")
     @Mapping(target = "name", source = "name")
     @Mapping(target = "email", source = "email")
     @Mapping(target = "language", source = "language")

@@ -22,11 +22,6 @@
             <artifactId>life-ping-application</artifactId>
             <version>${app.version}</version>
         </dependency>
-        <dependency>
-            <groupId>cloud.arrah</groupId>
-            <artifactId>life-ping-domain</artifactId>
-            <version>${app.version}</version>
-        </dependency>
         <!-- Validation -->
         <dependency>
             <groupId>jakarta.validation</groupId>

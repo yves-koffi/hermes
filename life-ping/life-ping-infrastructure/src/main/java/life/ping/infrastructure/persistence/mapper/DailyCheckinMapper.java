@@ -9,14 +9,14 @@ import org.mapstruct.Mapping;
 public interface DailyCheckinMapper {
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "accountId", source = "accountId")
     @Mapping(target = "localDate", source = "localDate")
     @Mapping(target = "checkedInAt", source = "checkedInAt")
     @Mapping(target = "source", source = "source")
     DailyCheckin toDomain(DailyCheckinEntity entity);
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "accountId", source = "accountId")
     @Mapping(target = "localDate", source = "localDate")
     @Mapping(target = "checkedInAt", source = "checkedInAt")
     @Mapping(target = "source", source = "source")

@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public record EmergencyContact(
         UUID id,
-        UUID userId,
+        UUID accountId,
         String name,
         String email,
         String language,

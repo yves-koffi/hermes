@@ -1,16 +1,18 @@
 package life.ping.application.usecase;
 
+import io.smallrye.mutiny.Uni;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
 public interface SendSOSRequestUseCase {
 
-   Output handle(Input in);
+    Uni<Output> handle(Input in);
 
     record Input(
             UUID userId,
-            LocalDate localDate
+            Instant localDate
     ) {}
 
     record Output(

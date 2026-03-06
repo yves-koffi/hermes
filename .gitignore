@@ -43,3 +43,6 @@ nb-configuration.xml
 /.quarkus/cli/plugins/
 # TLS Certificates
 .certs/
+
+# Store Purchase secrets
+store-purchase/store-purchase-infrastructure/src/main/resources/assets/service-account-google-play.json

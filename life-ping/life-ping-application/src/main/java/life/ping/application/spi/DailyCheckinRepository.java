@@ -3,6 +3,7 @@ package life.ping.application.spi;
 import io.smallrye.mutiny.Uni;
 import life.ping.domain.model.DailyCheckin;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,7 +11,11 @@ import java.util.UUID;
 public interface DailyCheckinRepository {
     Uni<DailyCheckin> save(DailyCheckin dailyCheckin);
 
+    Uni<Boolean> saveIfAbsent(DailyCheckin dailyCheckin);
+
     Uni<Optional<DailyCheckin>> findById(UUID id);
+
+    Uni<Optional<DailyCheckin>> findByAccountIdAndLocalDate(UUID accountId, LocalDate localDate);
 
     Uni<List<DailyCheckin>> findAll();
 

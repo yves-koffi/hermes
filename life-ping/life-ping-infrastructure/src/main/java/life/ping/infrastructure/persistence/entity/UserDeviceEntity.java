@@ -21,10 +21,10 @@ import java.util.UUID;
 @Table(
         name = "user_devices",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_user_devices_user_id_fcm_token", columnNames = {"user_id", "fcm_token"})
+                @UniqueConstraint(name = "uk_user_devices_account_id_fcm_token", columnNames = {"account_id", "fcm_token"})
         },
         indexes = {
-                @Index(name = "idx_user_device_user", columnList = "user_id"),
+                @Index(name = "idx_user_device_account", columnList = "account_id"),
                 @Index(name = "idx_user_device_last_seen", columnList = "last_seen_at")
         }
 )
@@ -39,8 +39,8 @@ public class UserDeviceEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @Column(name = "account_id", nullable = false)
+    private UUID accountId;
 
     @Column(name = "platform", nullable = false)
     private String platform;
@@ -48,6 +48,12 @@ public class UserDeviceEntity {
     @Column(name = "fcm_token", nullable = false)
     private String fcmToken;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
     @Column(name = "last_seen_at", nullable = false)
     private LocalDateTime lastSeenAt;
+
+    @Column(name = "soft_deleted_at")
+    private LocalDateTime softDeletedAt;
 }

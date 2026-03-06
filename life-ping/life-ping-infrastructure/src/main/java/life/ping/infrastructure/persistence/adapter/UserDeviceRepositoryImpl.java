@@ -8,6 +8,7 @@ import life.ping.application.spi.UserDeviceRepository;
 import life.ping.infrastructure.persistence.mapper.UserDeviceMapper;
 import life.ping.infrastructure.persistence.repository.UserDeviceEntityRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,6 +37,17 @@ public class UserDeviceRepositoryImpl implements UserDeviceRepository {
     public Uni<Optional<UserDevice>> findById(UUID id) {
         return userDeviceEntityRepository.findById(id)
                 .map(entity -> Optional.ofNullable(userDeviceMapper.toDomain(entity)));
+    }
+
+    @Override
+    public Uni<Optional<UserDevice>> findByAccountIdAndFcmToken(UUID accountId, String fcmToken) {
+        return userDeviceEntityRepository.findByAccountIdAndFcmToken(accountId, fcmToken)
+                .map(entity -> Optional.ofNullable(userDeviceMapper.toDomain(entity)));
+    }
+
+    @Override
+    public Uni<Integer> updateRegistration(UUID id, String platform, LocalDateTime lastSeenAt, LocalDateTime softDeletedAt) {
+        return userDeviceEntityRepository.updateRegistration(id, platform, lastSeenAt, softDeletedAt);
     }
 
     @Override

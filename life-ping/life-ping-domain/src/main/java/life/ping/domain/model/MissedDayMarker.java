@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record MissedDayMarker(
         UUID id,
-        UUID userId,
+        UUID accountId,
         LocalDate localDate,
         OffsetDateTime createdAt
 ) {

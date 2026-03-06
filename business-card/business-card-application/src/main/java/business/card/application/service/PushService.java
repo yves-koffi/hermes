@@ -4,7 +4,6 @@ import business.card.application.command.BusinessCardCommand;
 import business.card.application.result.BusinessCardDetails;
 import business.card.domain.model.BusinessCardPatch;
 import business.card.application.spi.BusinessCardRepository;
-import business.card.application.spi.CurrentAccountProvider;
 import business.card.application.usecase.PushUseCase;
 import business.card.domain.model.BusinessCard;
 import business.card.domain.model.BusinessCardStatus;
@@ -14,6 +13,7 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import shared.application.context.ExecutionContext;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -29,7 +29,7 @@ public class PushService implements PushUseCase {
     @Inject
     BusinessCardRepository businessCardRepository;
     @Inject
-    CurrentAccountProvider currentAccountProvider;
+    ExecutionContext context;
 
     @Override
     public Uni<Void> execute(List<BusinessCardCommand> commands) {
@@ -71,7 +71,7 @@ public class PushService implements PushUseCase {
                         return businessCardRepository.save(cardToSave)
                                 .map(saved -> Optional.of(toDetails(saved, BusinessCardStatus.INSERT)));
                     }
-                    return currentAccountProvider.getCurrentAccountId()
+                    return context.getCurrentAccountId()
                             .flatMap(accountId -> businessCardRepository.save(buildNewCard(cmd, accountId)))
                             .map(saved -> Optional.of(toDetails(saved, BusinessCardStatus.INSERT)));
                 });

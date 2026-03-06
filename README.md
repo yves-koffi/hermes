@@ -74,3 +74,11 @@ Easily start your REST Web Services
 ### Important runtime note
 
 INSERT now requires X-Account-Id header (UUID) to resolve current binding/account context.
+
+
+HeartbeatScheduler - évaluer les jours manqués (hourly), idempotent.
+Nécessite un mécanisme anti double-comptage avec missed_day_marker.
+
+* TriggerEmergencyAlertScheduler - Déclencher l'alerte si missed_streak >= max_missed_days (anti-dup via 
+  emergency_alert).
+* Optionnellement applique une règle de "grâce" basée sur last_seen_at.

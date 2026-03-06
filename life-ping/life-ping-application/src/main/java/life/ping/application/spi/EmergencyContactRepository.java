@@ -12,6 +12,10 @@ public interface EmergencyContactRepository {
 
     Uni<Optional<EmergencyContact>> findById(UUID id);
 
+    Uni<List<EmergencyContact>> findByAccountId(UUID accountId);
+
+    Uni<Integer> updateContact(EmergencyContact emergencyContact);
+
     Uni<List<EmergencyContact>> findAll();
 
     Uni<Void> deleteById(UUID id);

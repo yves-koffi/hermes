@@ -12,6 +12,7 @@ public record Account(
         String deviceModel,
         String devicePlatform,
         String timezone,
+        Integer missedStreak,
         LocalTime callbackTime,
         Integer checkInFrequency,
         Integer thresholdPeriod,

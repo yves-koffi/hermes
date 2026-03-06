@@ -48,6 +48,9 @@ public class AccountEntity {
     @Column(name = "device_model", nullable = false)
     private String deviceModel;
 
+    @Column(name = "missed_streak")
+    private Integer missedStreak;
+
     @Column(name = "device_platform", nullable = false)
     private String devicePlatform;
 
