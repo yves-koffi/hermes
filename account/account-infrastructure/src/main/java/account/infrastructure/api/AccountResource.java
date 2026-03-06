@@ -27,9 +27,10 @@ class AccountResource {
     @POST
     @Path("login")
     public Uni<RestResponse<AccountResponse>> login(LoginRequest request) {
-        return loginUseCase.execute(accountRequestMapper.toCommand(request))
-                .map(accountRequestMapper::toResponse)
-                .map(RestResponse::ok);
+//        return loginUseCase.execute(accountRequestMapper.toCommand(request))
+//                .map(accountRequestMapper::toResponse)
+//                .map(RestResponse::ok);
+        return Uni.createFrom().item(null);
     }
 
     @GET
