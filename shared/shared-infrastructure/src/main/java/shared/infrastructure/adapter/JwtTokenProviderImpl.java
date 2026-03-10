@@ -26,7 +26,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
     @Override
     public String generateAccessToken(
             String subjectId,
-            String userId,
+            UUID userId,
             List<String> roles,
             Long expiresIn
     ) {

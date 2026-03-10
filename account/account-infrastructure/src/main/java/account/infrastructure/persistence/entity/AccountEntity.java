@@ -53,5 +53,4 @@ public class AccountEntity {
     @Column(name = "updated_at", insertable = false, updatable = false)
     public OffsetDateTime updatedAt;
 
-
 }

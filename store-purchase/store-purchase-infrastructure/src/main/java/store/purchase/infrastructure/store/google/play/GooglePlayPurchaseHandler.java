@@ -1,6 +1,10 @@
 package store.purchase.infrastructure.store.google.play;
 
 
+import com.apple.itunes.storekit.model.JWSRenewalInfoDecodedPayload;
+import com.apple.itunes.storekit.model.JWSTransactionDecodedPayload;
+import com.apple.itunes.storekit.verification.SignedDataVerifier;
+import com.apple.itunes.storekit.verification.VerificationException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.androidpublisher.AndroidPublisher;
@@ -15,7 +19,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Produces;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import store.purchase.application.command.ReceivePubsubMessageCommand;
+import store.purchase.infrastructure.api.dto.ReceivePubsubMessageRequest;
 import store.purchase.application.spi.PurchaseHandler;
 import store.purchase.application.spi.PurchaseRepository;
 import store.purchase.domain.*;
@@ -26,10 +30,11 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
-public class GooglePlayPurchaseHandler implements PurchaseHandler<AndroidPublisher, ReceivePubsubMessageCommand> {
+public class GooglePlayPurchaseHandler implements PurchaseHandler<AndroidPublisher, ReceivePubsubMessageRequest> {
     private volatile AndroidPublisher client;
 
     @ConfigProperty(name = "google.client.serviceAccountPath")
@@ -91,7 +96,8 @@ public class GooglePlayPurchaseHandler implements PurchaseHandler<AndroidPublish
 
 
     @Override
-    public Uni<Void> handlePullPurchase(ReceivePubsubMessageCommand command) {
+    public Uni<Void> handlePullPurchase(ReceivePubsubMessageRequest request) {
+
 
         return Uni.createFrom().voidItem();
     }
@@ -280,5 +286,28 @@ public class GooglePlayPurchaseHandler implements PurchaseHandler<AndroidPublish
         if (productData.externalProductId() == null || productData.externalProductId().isBlank()) {
             throw new IllegalArgumentException("externalProductId must not be blank");
         }
+    }
+
+
+    private Optional<JWSTransactionDecodedPayload> decodeTransaction(SignedDataVerifier verifier, String signedTx) {
+        if (signedTx == null || signedTx.isBlank()) return Optional.empty();
+        try {
+            return Optional.of(verifier.verifyAndDecodeTransaction(signedTx));
+        } catch (VerificationException ve) {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<JWSRenewalInfoDecodedPayload> decodeRenewal(SignedDataVerifier verifier, String signedRenewal) {
+        if (signedRenewal == null || signedRenewal.isBlank()) return Optional.empty();
+        try {
+            return Optional.of(verifier.verifyAndDecodeRenewalInfo(signedRenewal));
+        } catch (VerificationException ve) {
+            return Optional.empty();
+        }
+    }
+
+    private static String safe(String s) {
+        return (s == null || s.isBlank()) ? null : s;
     }
 }

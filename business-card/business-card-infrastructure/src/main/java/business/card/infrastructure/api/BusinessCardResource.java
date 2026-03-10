@@ -1,6 +1,6 @@
 package business.card.infrastructure.api;
 
-import business.card.application.usecase.FindImageUseCase;
+import business.card.application.usecase.FindImageByIdUseCase;
 import business.card.domain.model.RecordFilter;
 import business.card.application.usecase.PullUseCase;
 import business.card.application.usecase.PushUseCase;
@@ -13,7 +13,6 @@ import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import lombok.RequiredArgsConstructor;
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
@@ -31,7 +30,8 @@ class BusinessCardResource {
     @Inject PushUseCase pushUseCase;
     @Inject SyncUseCase syncUseCase;
     @Inject UploadImageUseCase uploadImageUseCase;
-    @Inject FindImageUseCase findImageUseCase;
+    @Inject
+    FindImageByIdUseCase findImageUseCase;
     @Inject BusinessCardRequestMapper businessCardRequestMapper;
 
     @GET

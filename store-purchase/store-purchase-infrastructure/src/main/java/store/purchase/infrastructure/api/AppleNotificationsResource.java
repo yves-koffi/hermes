@@ -25,17 +25,12 @@ public class AppleNotificationsResource {
         if (req == null || req.signedPayload() == null || req.signedPayload().isBlank()) {
             return Uni.createFrom().item(Response.status(Response.Status.BAD_REQUEST).build());
         }
-
         try {
 
             return handler.processNotification(req.signedPayload(), appleId)
                     .onItem().transform(it -> Response.ok().build());
 
-        } catch (VerificationException e) {
-
-            return Uni.createFrom().item(Response.status(Response.Status.BAD_REQUEST).build());
-
-        } catch (Exception e) {
+        }  catch (Exception e) {
 
             return Uni.createFrom().item(Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
 

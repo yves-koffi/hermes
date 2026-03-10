@@ -2,9 +2,8 @@ package store.purchase.infrastructure.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.services.androidpublisher.AndroidPublisher;
 import io.smallrye.mutiny.Uni;
-import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -14,11 +13,10 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import store.purchase.application.command.ReceivePubsubMessageCommand;
 import store.purchase.application.result.PlayNotification;
-import store.purchase.application.spi.PurchaseHandler;
 import store.purchase.domain.PubsubMessage;
 import store.purchase.domain.PushRequest;
+import store.purchase.infrastructure.event.GooglePlayPurchaseEvent;
 
 @Path("/pubsub")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -29,10 +27,9 @@ public class RtdnPushResource {
     private static final String GENERIC_ERROR_MESSAGE = "Error processing message";
 
     @Inject
-    Instance<PurchaseHandler<AndroidPublisher, ReceivePubsubMessageCommand>> handlers;
-
-    @Inject
     ObjectMapper mapper;
+    @Inject
+    Event<GooglePlayPurchaseEvent> googlePlayPurchaseEvent;
 
     @POST
     @Path("/push")
@@ -40,14 +37,6 @@ public class RtdnPushResource {
         if (request == null || request.getMessage() == null) {
             LOGGER.warn("Requete Pub/Sub invalide: corps ou message manquant.");
             return Uni.createFrom().item(badRequest("Bad Request: Missing message"));
-        }
-
-        PurchaseHandler<AndroidPublisher, ReceivePubsubMessageCommand> handler = handlers.stream()
-                .findFirst()
-                .orElse(null);
-        if (handler == null) {
-            LOGGER.error("Aucun handler d'achat Google Play n'est configure pour traiter la notification RTDN.");
-            return Uni.createFrom().item(serverError(Response.Status.SERVICE_UNAVAILABLE, "Service unavailable"));
         }
 
         PubsubMessage pubsubMessage = request.getMessage();
@@ -59,20 +48,9 @@ public class RtdnPushResource {
 
             LOGGER.info("Message Pub/Sub recu sur l'abonnement '{}' avec l'ID '{}'.", subscription, messageId);
 
-            return handler.handlePullPurchase(new ReceivePubsubMessageCommand(messageId, subscription, notificationData))
-                    .onItem().invoke(() -> LOGGER.debug("Traitement termine pour le message ID '{}'. Envoi de l'ACK.", messageId))
-                    .onItem().transform(ignored -> Response.ok(SUCCESS_MESSAGE).build())
-                    .onFailure().invoke(error ->
-                            LOGGER.error(
-                                    "Erreur lors du traitement du message Pub/Sub ID '{}' de l'abonnement '{}'.",
-                                    messageId,
-                                    subscription,
-                                    error
-                            )
-                    )
-                    .onFailure().recoverWithItem(e -> {
-                        return serverError(Response.Status.INTERNAL_SERVER_ERROR, GENERIC_ERROR_MESSAGE);
-                    });
+            googlePlayPurchaseEvent.fireAsync(new GooglePlayPurchaseEvent(messageId, subscription, notificationData));
+
+            return Uni.createFrom().item(Response.ok().build());
 
         } catch (IllegalArgumentException | JsonProcessingException e) {
             LOGGER.warn("Payload Pub/Sub invalide pour le message ID '{}': {}", messageId, e.getMessage());

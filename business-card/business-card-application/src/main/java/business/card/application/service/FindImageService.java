@@ -1,6 +1,6 @@
 package business.card.application.service;
 
-import business.card.application.usecase.FindImageUseCase;
+import business.card.application.usecase.FindImageByIdUseCase;
 import business.card.application.spi.BusinessCardRepository;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @ApplicationScoped
-public class FindImageService implements FindImageUseCase {
+public class FindImageService implements FindImageByIdUseCase {
 
     @Inject
     BusinessCardRepository repository;

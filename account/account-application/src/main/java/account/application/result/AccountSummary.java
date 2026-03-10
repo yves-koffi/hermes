@@ -2,11 +2,13 @@ package account.application.result;
 
 import account.domain.model.Provider;
 
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
 public record AccountSummary(
-        String id,
+        UUID id,
         String name,
-        String email,
         Provider provider,
-        Boolean activated
+        OffsetDateTime activatedAt
 ) {
 }

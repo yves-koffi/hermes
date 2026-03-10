@@ -13,7 +13,7 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import shared.application.context.ExecutionContext;
+import shared.application.context.RequestContext;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -29,7 +29,7 @@ public class PushService implements PushUseCase {
     @Inject
     BusinessCardRepository businessCardRepository;
     @Inject
-    ExecutionContext context;
+    RequestContext context;
 
     @Override
     public Uni<Void> execute(List<BusinessCardCommand> commands) {
@@ -71,8 +71,7 @@ public class PushService implements PushUseCase {
                         return businessCardRepository.save(cardToSave)
                                 .map(saved -> Optional.of(toDetails(saved, BusinessCardStatus.INSERT)));
                     }
-                    return context.getCurrentAccountId()
-                            .flatMap(accountId -> businessCardRepository.save(buildNewCard(cmd, accountId)))
+                    return businessCardRepository.save(buildNewCard(cmd, context.getExecutionContext().accountId()))
                             .map(saved -> Optional.of(toDetails(saved, BusinessCardStatus.INSERT)));
                 });
     }

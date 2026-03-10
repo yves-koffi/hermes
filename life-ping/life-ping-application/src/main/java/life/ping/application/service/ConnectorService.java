@@ -60,7 +60,7 @@ public class ConnectorService implements ConnectorUseCase {
                 account.id(),
                 jwtTokenProvider.generateAccessToken(
                         account.appUuid(),
-                        account.id().toString(),
+                        account.id(),
                         DEFAULT_ROLES,
                         (long) (60 * 24 * 24 * 366 * 10)
                 ),

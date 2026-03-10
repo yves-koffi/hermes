@@ -1,8 +1,8 @@
-package store.purchase.application.command;
+package store.purchase.infrastructure.event;
 
 import store.purchase.application.result.PlayNotification;
 
-public record ReceivePubsubMessageCommand(
+public record GooglePlayPurchaseEvent(
         String messageId,
         String subscription,
         PlayNotification notificationData

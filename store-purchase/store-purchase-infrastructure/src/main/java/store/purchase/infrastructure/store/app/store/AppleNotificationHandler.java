@@ -1,12 +1,18 @@
 package store.purchase.infrastructure.store.app.store;
 
-import com.apple.itunes.storekit.model.*;
+import com.apple.itunes.storekit.model.JWSRenewalInfoDecodedPayload;
+import com.apple.itunes.storekit.model.JWSTransactionDecodedPayload;
+import com.apple.itunes.storekit.model.ResponseBodyV2DecodedPayload;
 import com.apple.itunes.storekit.verification.SignedDataVerifier;
+import com.apple.itunes.storekit.verification.VerificationException;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
-import store.purchase.infrastructure.persistence.entity.ProductEntity;
+import store.purchase.infrastructure.event.AppleNotificationEvent;
 import store.purchase.infrastructure.persistence.repository.ProductEntityRepository;
+
+import java.util.Optional;
 
 
 @ApplicationScoped
@@ -17,8 +23,13 @@ public class AppleNotificationHandler {
 
     @Inject
     AppleVerifierService verifierService;
+    @Inject
+    Event<AppleNotificationEvent> appleNotificationEvent;
 
-    public Uni<Void> processNotification(String signedPayload, Long appleId) throws Exception {
+    public Uni<Void> processNotification(
+            String signedPayload,
+            Long appleId
+    ) {
 
         return repository.findByAppleId(appleId).flatMap(product -> {
             if (product.isPresent()) {
@@ -30,13 +41,13 @@ public class AppleNotificationHandler {
                                     product.get().getAppAppleId()
                             );
 
-                    ResponseBodyV2DecodedPayload decoded =
+                    ResponseBodyV2DecodedPayload payload =
                             verifier.verifyAndDecodeNotification(signedPayload);
 
-                    handleNotification(decoded, product.get());
+                    appleNotificationEvent.fireAsync(new AppleNotificationEvent(payload, product.get()));
 
                 } catch (Exception ignored) {
-                    return Uni.createFrom().failure(new RuntimeException("No valid bundleId found for notification"));
+                    return Uni.createFrom().failure(new RuntimeException("No valid bundleId found for payload"));
                 }
             }
             return Uni.createFrom().voidItem();
@@ -44,42 +55,5 @@ public class AppleNotificationHandler {
 
     }
 
-    private void handleNotification(
-            ResponseBodyV2DecodedPayload notification,
-            ProductEntity product
-    ) {
 
-        NotificationTypeV2 type = notification.getNotificationType();
-        Subtype subtype = notification.getSubtype();
-
-        Data data = notification.getData();
-
-        if (data == null) return;
-
-        String signedTx = data.getSignedTransactionInfo();
-
-        if (signedTx == null) return;
-
-        SignedDataVerifier verifier =
-                verifierService.getVerifier(product.getBundleId(), product.getAppAppleId());
-
-        try {
-
-            JWSTransactionDecodedPayload transaction =
-                    verifier.verifyAndDecodeTransaction(signedTx);
-
-
-            String originalTransactionId =
-                    transaction.getOriginalTransactionId();
-
-            Long expiresDate = transaction.getExpiresDate();
-
-            // update subscription ici
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(e);
-
-        }
-    }
 }

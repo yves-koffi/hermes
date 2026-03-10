@@ -13,11 +13,10 @@ public class AccountResultMapper {
             return null;
         }
         return new AccountSummary(
-                account.id() != null ? account.id().toString() : null,
+                account.id(),
                 account.name(),
-                account.email(),
-                account.provider() != null ? account.provider() : null,
-                account.isActivated()
+                account.provider(),
+                account.activatedAt()
         );
     }
 
@@ -26,12 +25,14 @@ public class AccountResultMapper {
             return null;
         }
         return new AccountDetails(
+                account.id(),
                 account.name(),
                 account.email(),
-                account.provider() != null ? account.provider().name().toLowerCase() : null,
+                account.phoneNumber(),
                 account.avatarUrl(),
-                account.isActivated(),
-                account.createdAt() != null ? Math.toIntExact(account.createdAt().toEpochSecond()) : null
+                account.provider(),
+                account.activatedAt(),
+                account.createdAt()
         );
     }
 }

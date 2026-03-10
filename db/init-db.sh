@@ -1,7 +1,34 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 echo "🚀 Initialisation des bases avec variables .env..."
+
+required_vars=(
+  LIFE_PING_DB
+  LIFE_PING_USER
+  LIFE_PING_PASSWORD
+  BUSINESS_CARD_DB
+  BUSINESS_CARD_USER
+  BUSINESS_CARD_PASSWORD
+  ACCOUNT_DB
+  ACCOUNT_USER
+  ACCOUNT_PASSWORD
+  STORE_PURCHASE_DB
+  STORE_PURCHASE_USER
+  STORE_PURCHASE_PASSWORD
+)
+
+missing_vars=()
+for var_name in "${required_vars[@]}"; do
+  if [[ -z "${!var_name:-}" ]]; then
+    missing_vars+=("${var_name}")
+  fi
+done
+
+if ((${#missing_vars[@]} > 0)); then
+  echo "Variables d'environnement manquantes: ${missing_vars[*]}" >&2
+  exit 1
+fi
 
 psql -v ON_ERROR_STOP=1 \
   --username postgres \
@@ -130,3 +157,5 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
   GRANT ALL ON FUNCTIONS TO ${STORE_PURCHASE_USER};
 
 EOSQL
+
+echo "Initialisation terminée"

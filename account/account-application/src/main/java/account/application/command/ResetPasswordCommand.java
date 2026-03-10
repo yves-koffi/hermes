@@ -1,7 +1,8 @@
 package account.application.command;
 
 public record ResetPasswordCommand(
-        String token,
-        String password
+        String hashToken,
+        String newPassword,
+        String confirmNewPassword
 ) {
 }

@@ -8,7 +8,7 @@ import business.card.application.spi.BusinessCardRepository;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import shared.application.context.ExecutionContext;
+import shared.application.context.RequestContext;
 
 import java.time.ZoneOffset;
 import java.util.List;
@@ -19,14 +19,13 @@ public class PullService implements PullUseCase {
     @Inject
     BusinessCardRepository repository;
     @Inject
-    ExecutionContext context;
+    RequestContext context;
 
 
     @Override
     public Uni<List<BusinessCardDetails>> execute(RecordFilter filter) {
         RecordFilter effectiveFilter = filter == null ? RecordFilter.RECORD : filter;
-        return context.getCurrentAccountId()
-                .flatMap(repository::findByAccountId)
+        return repository.findByAccountId(context.getExecutionContext().accountId())
                 .map(cards -> cards.stream()
                         .filter(card -> matchesFilter(card, effectiveFilter))
                         .map(this::toDetails)

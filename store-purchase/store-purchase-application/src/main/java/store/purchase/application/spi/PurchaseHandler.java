@@ -56,7 +56,7 @@ public interface PurchaseHandler<T,R> {
             String token
     );
 
-    Uni<Void> handlePullPurchase(R command);
+    Uni<Void> handlePullPurchase(R request);
 
     T getClient() throws GeneralSecurityException, IOException;
 }

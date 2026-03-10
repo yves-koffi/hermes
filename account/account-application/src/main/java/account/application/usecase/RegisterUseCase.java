@@ -1,9 +1,9 @@
 package account.application.usecase;
 
-import account.application.command.CreateAccountCommand;
-import account.application.result.AccountDetails;
+import account.application.command.RegisterCommand;
+import account.application.result.RegisterResult;
 import io.smallrye.mutiny.Uni;
 
 public interface RegisterUseCase {
-    Uni<AccountDetails> execute(CreateAccountCommand cmd);
+    Uni<RegisterResult> execute(RegisterCommand command);
 }

@@ -1,20 +1,19 @@
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
 CREATE TYPE tokenTypeEnum AS ENUM (
-    'VERIFIED',
-    'CHANGED_PASSWORD'
+    'VERIFY_CODE',
+    'VERIFY_TOKEN',
+    'REFRESH_TOKEN'
     );
 
 CREATE TABLE hash_tokens
 (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    token       VARCHAR(255) NOT NULL UNIQUE,
-    token_type  tokenTypeEnum    DEFAULT 'CHANGED_PASSWORD',
+    hash_token  VARCHAR(255) NOT NULL UNIQUE,
+    token       VARCHAR(255),
+    token_type  tokenTypeEnum    DEFAULT 'VERIFY_CODE',
     account_id  UUID         NOT NULL,
-    expiry_date TIMESTAMP    NOT NULL,
-    revoked     BOOLEAN          DEFAULT FALSE,
+    expiry_date TIMESTAMPTZ  NOT NULL,
     ip_address  VARCHAR(32),
-    revoked_at  TIMESTAMP,
-    created_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
+    revoked_at  TIMESTAMPTZ,
+    created_at  TIMESTAMPTZ      DEFAULT now(),
+    updated_at  TIMESTAMPTZ      DEFAULT now()
 );

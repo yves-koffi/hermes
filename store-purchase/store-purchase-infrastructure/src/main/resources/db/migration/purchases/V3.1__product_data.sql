@@ -1,5 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
 CREATE TYPE ProductType AS ENUM ('Subscription', 'Consumable', 'NonConsumable');
 CREATE TYPE Platform AS ENUM ('IOS', 'ANDROID');
 

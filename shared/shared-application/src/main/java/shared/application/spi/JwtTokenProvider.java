@@ -7,7 +7,7 @@ import java.util.UUID;
 public interface JwtTokenProvider {
     String generateAccessToken(
             String subjectId,
-            String userId,
+            UUID userId,
             List<String> roles,
             Long expiresIn
     );

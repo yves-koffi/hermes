@@ -18,6 +18,7 @@
     <properties>
         <app.version>${project.version}</app.version>
         <compiler-plugin.version>3.15.0</compiler-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -168,6 +169,36 @@
                 <artifactId>google-api-client</artifactId>
                 <version>${google.api.client.version}</version>
             </dependency>
+            <dependency>
+                <groupId>cloud.arrah</groupId>
+                <artifactId>shared-infrastructure</artifactId>
+                <version>${app.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cloud.arrah</groupId>
+                <artifactId>life-ping-infrastructure</artifactId>
+                <version>${app.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cloud.arrah</groupId>
+                <artifactId>business-card-infrastructure</artifactId>
+                <version>${app.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cloud.arrah</groupId>
+                <artifactId>image-server-infrastructure</artifactId>
+                <version>${app.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cloud.arrah</groupId>
+                <artifactId>store-purchase-infrastructure</artifactId>
+                <version>${app.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cloud.arrah</groupId>
+                <artifactId>account-infrastructure</artifactId>
+                <version>${app.version}</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
@@ -206,7 +237,27 @@
                     <artifactId>quarkus-maven-plugin</artifactId>
                     <version>${quarkus.platform.version}</version>
                     <extensions>true</extensions>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>build</goal>
+                                <goal>generate-code</goal>
+                                <goal>generate-code-tests</goal>
+                                <goal>native-image-agent</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
+                <!--Encode properties resources-->
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <propertiesEncoding>${project.build.sourceEncoding}</propertiesEncoding>
+                    </configuration>
+                </plugin>
+                <!-- end  -->
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${compiler-plugin.version}</version>

@@ -31,7 +31,7 @@ public class OidcValidationFilter implements ContainerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(OidcValidationFilter.class);
 
-    @ConfigProperty(name = "quarkus.oidc.audience")
+    @ConfigProperty(name = "google.oidc.audience")
     String audience; // Injecte l'audience configurée dans application.properties
 
     private GoogleIdTokenVerifier verifier;

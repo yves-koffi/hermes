@@ -23,8 +23,9 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Override
     public Uni<Account> save(Account account) {
         var entity = accountMapper.toEntity(account);
-        return accountEntityRepository.persistAndFlush(entity)
-                .replaceWith(entity)
+        return accountEntityRepository.getSession()
+                .flatMap(session -> session.merge(entity)
+                        .flatMap(merged -> session.flush().replaceWith(merged)))
                 .map(accountMapper::toDomain);
     }
 

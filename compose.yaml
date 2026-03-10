@@ -1,5 +1,4 @@
 services:
-
   hermes-db:
     image: postgres:15
     restart: always

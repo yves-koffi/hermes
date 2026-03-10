@@ -1,4 +1,9 @@
 package account.application.command;
 
-public record UpdateAccountCommand() {
+import account.domain.model.PhoneNumber;
+
+public record UpdateAccountCommand(
+        String name,
+        PhoneNumber phoneNumber
+) {
 }

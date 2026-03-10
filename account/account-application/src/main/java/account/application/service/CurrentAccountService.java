@@ -8,7 +8,7 @@ import account.application.usecase.CurrentAccountUseCase;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import shared.application.context.ExecutionContext;
+import shared.application.context.RequestContext;
 import shared.domain.exception.DomainNotFoundException;
 
 import java.util.Map;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class CurrentAccountService implements CurrentAccountUseCase {
 
     @Inject
-    ExecutionContext context;
+    RequestContext context;
     @Inject
     AccountRepository accountRepository;
     @Inject
@@ -25,19 +25,19 @@ public class CurrentAccountService implements CurrentAccountUseCase {
 
     @Override
     public Uni<AccountDetails> execute() {
-        return context.getCurrentAccountId()
-                .flatMap(accountId -> accountRepository.findById(accountId)
-                        .flatMap(accountOpt -> {
-                            if (accountOpt.isEmpty()) {
-                                return Uni.createFrom().failure(
-                                        new DomainNotFoundException(
-                                                "ACCOUNT_NOT_FOUND",
-                                                "account.not_found",
-                                                Map.of("id", accountId)
-                                        )
-                                );
-                            }
-                            return Uni.createFrom().item(accountResultMapper.toDetails(accountOpt.get()));
-                        }));
+        var accountId = context.getExecutionContext().accountId();
+        return accountRepository.findById(accountId)
+                .flatMap(accountOpt -> {
+                    if (accountOpt.isEmpty()) {
+                        return Uni.createFrom().failure(
+                                new DomainNotFoundException(
+                                        "ACCOUNT_NOT_FOUND",
+                                        "account.not_found",
+                                        Map.of("id", accountId)
+                                )
+                        );
+                    }
+                    return Uni.createFrom().item(accountResultMapper.toDetails(accountOpt.get()));
+                });
     }
 }

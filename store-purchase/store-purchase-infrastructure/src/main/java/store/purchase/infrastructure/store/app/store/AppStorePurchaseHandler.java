@@ -9,6 +9,7 @@ import com.apple.itunes.storekit.verification.SignedDataVerifier;
 import com.apple.itunes.storekit.verification.VerificationException;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import store.purchase.application.spi.PurchaseHandler;
 import store.purchase.application.spi.PurchaseRepository;
@@ -19,6 +20,7 @@ import store.purchase.domain.ProductType;
 import store.purchase.domain.Purchase;
 import store.purchase.domain.PurchaseStatus;
 import store.purchase.domain.PurchaseType;
+import store.purchase.infrastructure.api.dto.ReceiveAppleNotificationRequest;
 import store.purchase.infrastructure.config.AppStoreVerifierConfig;
 import store.purchase.infrastructure.config.CertificateProducer;
 
@@ -30,7 +32,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 @ApplicationScoped
-public class AppStorePurchaseHandler implements PurchaseHandler<SignedDataVerifier, String> {
+public class AppStorePurchaseHandler implements PurchaseHandler<SignedDataVerifier, ReceiveAppleNotificationRequest> {
 
     private final ReceiptUtility receiptUtility = new ReceiptUtility();
     private final AppStoreVerifierConfig appStoreVerifierConfig;
@@ -103,8 +105,11 @@ public class AppStorePurchaseHandler implements PurchaseHandler<SignedDataVerifi
                 .chain(transaction -> persistSubscription(accountId, productData, token, transaction));
     }
 
+
     @Override
-    public Uni<Void> handlePullPurchase(String cmd) {
+    public Uni<Void> handlePullPurchase(ReceiveAppleNotificationRequest request) {
+
+
         return Uni.createFrom().voidItem();
     }
 
