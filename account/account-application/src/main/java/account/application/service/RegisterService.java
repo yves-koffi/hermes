@@ -1,7 +1,7 @@
 package account.application.service;
 
 import account.application.command.RegisterCommand;
-import account.application.result.RegisterResult;
+import account.application.result.RegisterDetails;
 import account.application.spi.AccountRepository;
 import account.application.usecase.RegisterUseCase;
 import account.domain.model.Account;
@@ -23,7 +23,7 @@ public class RegisterService implements RegisterUseCase {
     AccountRepository accountRepository;
 
     @Override
-    public Uni<RegisterResult> execute(RegisterCommand command) {
+    public Uni<RegisterDetails> execute(RegisterCommand command) {
         return accountRepository.findByEmail(command.email())
                 .flatMap(accountOpt -> {
                     if (accountOpt.isPresent()) {
@@ -51,7 +51,7 @@ public class RegisterService implements RegisterUseCase {
                     );
 
                     return accountRepository.save(account)
-                            .map(saved -> new RegisterResult(saved.id(), true));
+                            .map(saved -> new RegisterDetails(saved.id(), true));
                 });
     }
 }

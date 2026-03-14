@@ -1,7 +1,7 @@
 package account.application.service;
 
 import account.application.command.VerifyAccountCommand;
-import account.application.result.AccountVerificationResult;
+import account.application.result.AccountVerificationDetails;
 import account.application.spi.AccountRepository;
 import account.application.spi.HashTokenRepository;
 import account.application.usecase.VerifyEmailUseCase;
@@ -30,7 +30,7 @@ public class VerifyEmailService implements VerifyEmailUseCase {
     AccountRepository accountRepository;
 
     @Override
-    public Uni<AccountVerificationResult> execute(VerifyAccountCommand command) {
+    public Uni<AccountVerificationDetails> execute(VerifyAccountCommand command) {
         if (command.token() == null || command.token().isBlank()) {
             return Uni.createFrom().failure(
                     new DomainConflictException(
@@ -108,7 +108,7 @@ public class VerifyEmailService implements VerifyEmailUseCase {
 
                                 return accountRepository.save(activated)
                                         .flatMap(saved -> hashTokenRepository.deleteById(token.id())
-                                                .replaceWith(new AccountVerificationResult(saved.activatedAt())));
+                                                .replaceWith(new AccountVerificationDetails(saved.activatedAt())));
                             });
                 });
     }

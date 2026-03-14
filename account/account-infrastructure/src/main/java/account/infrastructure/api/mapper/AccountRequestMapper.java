@@ -4,7 +4,7 @@ import account.application.command.LoginCommand;
 import account.application.command.RegisterCommand;
 import account.application.command.SocialCredentialCommand;
 import account.application.command.UpdateAccountCommand;
-import account.application.result.AuthResult;
+import account.application.result.AuthDetails;
 import account.application.result.AccountDetails;
 import account.application.result.AccountSummary;
 import account.domain.model.PhoneNumber;
@@ -51,7 +51,7 @@ public class AccountRequestMapper {
         );
     }
 
-    public AuthResponse toResponse(AuthResult result) {
+    public AuthResponse toResponse(AuthDetails result) {
         return new AuthResponse(
                 result.accessToken(),
                 result.refreshToken(),

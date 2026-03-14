@@ -1,9 +1,9 @@
 package account.application.usecase;
 
 import account.application.command.SendVerifyCodeCommand;
-import account.application.result.VerifyCodeSentResult;
+import account.application.result.VerifyCodeSentDetails;
 import io.smallrye.mutiny.Uni;
 
 public interface VerificationNotificationUseCase {
-    Uni<VerifyCodeSentResult> execute(SendVerifyCodeCommand command);
+    Uni<VerifyCodeSentDetails> execute(SendVerifyCodeCommand command);
 }

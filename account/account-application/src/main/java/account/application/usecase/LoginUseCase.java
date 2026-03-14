@@ -1,10 +1,10 @@
 package account.application.usecase;
 
 import account.application.command.LoginCommand;
-import account.application.result.AuthResult;
+import account.application.result.AuthDetails;
 import io.smallrye.mutiny.Uni;
 
 
 public interface LoginUseCase {
-    Uni<AuthResult> execute(LoginCommand command);
+    Uni<AuthDetails> execute(LoginCommand command);
 }

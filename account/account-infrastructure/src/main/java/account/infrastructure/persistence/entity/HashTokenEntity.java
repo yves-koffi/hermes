@@ -26,9 +26,6 @@ public class HashTokenEntity {
     @Column(name = "hash_token", nullable = false, unique = true, length = 255)
     public String hashToken;
 
-    @Column(name = "token", length = 255)
-    public String token;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "token_type", length = 16)
     public TokenType tokenType = TokenType.VERIFY_CODE;

@@ -1,6 +1,6 @@
 package account.application.result;
 
-public record ForgetPasswordRequestResult(
+public record ForgetPasswordRequestDetails(
         String email
 ) {
 }

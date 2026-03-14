@@ -2,7 +2,7 @@ package account.application.result;
 
 import java.time.OffsetDateTime;
 
-public record AccountVerificationResult(
-        OffsetDateTime verifiedAt
+public record PasswordResetDetails(
+        OffsetDateTime resetAt
 ) {
 }

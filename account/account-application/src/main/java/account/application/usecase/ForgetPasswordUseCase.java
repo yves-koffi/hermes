@@ -1,9 +1,9 @@
 package account.application.usecase;
 
 import account.application.command.ForgetPasswordCommand;
-import account.application.result.ForgetPasswordRequestResult;
+import account.application.result.ForgetPasswordRequestDetails;
 import io.smallrye.mutiny.Uni;
 
 public interface ForgetPasswordUseCase {
-    Uni<ForgetPasswordRequestResult> execute(ForgetPasswordCommand command);
+    Uni<ForgetPasswordRequestDetails> execute(ForgetPasswordCommand command);
 }

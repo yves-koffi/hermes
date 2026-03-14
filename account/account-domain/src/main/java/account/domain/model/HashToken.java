@@ -6,7 +6,6 @@ import java.util.UUID;
 public record HashToken(
         UUID id,
         String hashToken,
-        String token,
         TokenType tokenType,
         UUID accountId,
         OffsetDateTime expiryDate,

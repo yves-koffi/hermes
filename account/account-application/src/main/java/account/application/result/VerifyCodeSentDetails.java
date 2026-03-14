@@ -1,6 +1,6 @@
 package account.application.result;
 
-public record VerifyCodeSentResult(
+public record VerifyCodeSentDetails(
         boolean accepted
 ) {
 }

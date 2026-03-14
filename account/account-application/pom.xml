@@ -27,11 +27,6 @@
             <artifactId>shared-application</artifactId>
             <version>${app.version}</version>
         </dependency>
-        <dependency>
-            <groupId>cloud.arrah</groupId>
-            <artifactId>image-server-application</artifactId>
-            <version>${app.version}</version>
-        </dependency>
         <!-- Validation -->
         <dependency>
             <groupId>jakarta.validation</groupId>

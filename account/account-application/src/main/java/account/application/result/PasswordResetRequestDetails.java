@@ -1,6 +1,6 @@
 package account.application.result;
 
-public record PasswordResetRequestResult(
+public record PasswordResetRequestDetails(
         boolean accepted
 ) {
 }

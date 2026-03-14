@@ -1,7 +1,7 @@
 package account.application.service;
 
 import account.application.command.LoginCommand;
-import account.application.result.AuthResult;
+import account.application.result.AuthDetails;
 import account.application.spi.AccountRepository;
 import account.application.usecase.LoginUseCase;
 import account.domain.model.Account;
@@ -25,7 +25,7 @@ public class LoginService implements LoginUseCase {
     JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public Uni<AuthResult> execute(LoginCommand command) {
+    public Uni<AuthDetails> execute(LoginCommand command) {
         return accountRepository.findByEmail(command.email())
                 .flatMap(accountOpt -> {
                     if (accountOpt.isEmpty()) {
@@ -52,7 +52,7 @@ public class LoginService implements LoginUseCase {
         return account.password() != null && BcryptUtil.matches(password, account.password());
     }
 
-    private AuthResult toAuthResult(Account account) {
+    private AuthDetails toAuthResult(Account account) {
         UUID accountId = account.id();
         String accessToken = jwtTokenProvider.generateAccessToken(
                 account.email(),
@@ -66,7 +66,7 @@ public class LoginService implements LoginUseCase {
                 null
         );
 
-        return new AuthResult(
+        return new AuthDetails(
                 accessToken,
                 refreshToken,
                 "Bearer",

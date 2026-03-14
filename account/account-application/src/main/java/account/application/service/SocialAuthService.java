@@ -1,7 +1,7 @@
 package account.application.service;
 
 import account.application.command.SocialCredentialCommand;
-import account.application.result.AuthResult;
+import account.application.result.AuthDetails;
 import account.application.spi.AccountRepository;
 import account.application.usecase.SocialAuthUseCase;
 import account.domain.model.Account;
@@ -24,7 +24,7 @@ public class SocialAuthService implements SocialAuthUseCase {
     JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public Uni<AuthResult> execute(SocialCredentialCommand command) {
+    public Uni<AuthDetails> execute(SocialCredentialCommand command) {
         return accountRepository.findByEmail(command.email())
                 .flatMap(accountOpt -> {
                     if (accountOpt.isPresent()) {
@@ -50,7 +50,7 @@ public class SocialAuthService implements SocialAuthUseCase {
                 });
     }
 
-    private AuthResult toAuthResult(Account account) {
+    private AuthDetails toAuthResult(Account account) {
         String accessToken = jwtTokenProvider.generateAccessToken(
                 account.email(),
                 account.id(),
@@ -63,7 +63,7 @@ public class SocialAuthService implements SocialAuthUseCase {
                 null
         );
 
-        return new AuthResult(
+        return new AuthDetails(
                 accessToken,
                 refreshToken,
                 "Bearer",

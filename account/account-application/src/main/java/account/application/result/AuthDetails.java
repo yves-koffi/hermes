@@ -1,6 +1,6 @@
 package account.application.result;
 
-public record AuthResult(
+public record AuthDetails(
         String accessToken,
         String refreshToken,
         String tokenType,

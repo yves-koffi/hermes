@@ -1,7 +1,7 @@
 package account.infrastructure.api;
 
 
-import account.application.result.RegisterResult;
+import account.application.result.RegisterDetails;
 import account.application.usecase.RegisterUseCase;
 import account.application.usecase.SocialAuthUseCase;
 import account.application.usecase.UpdateAccountUseCase;
@@ -56,7 +56,7 @@ public class AccountResource {
 
     @POST
     @Path("register")
-    public Uni<RestResponse<RegisterResult>> register(RegisterRequest request) {
+    public Uni<RestResponse<RegisterDetails>> register(RegisterRequest request) {
         return registerUseCase.execute(accountRequestMapper.toCommand(request))
                 .map(RestResponse::ok);
     }

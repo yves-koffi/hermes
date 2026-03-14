@@ -1,7 +1,7 @@
 package account.application.service;
 
 import account.application.command.ForgetPasswordCommand;
-import account.application.result.ForgetPasswordRequestResult;
+import account.application.result.ForgetPasswordRequestDetails;
 import account.application.spi.AccountRepository;
 import account.application.spi.HashTokenRepository;
 import account.application.usecase.ForgetPasswordUseCase;
@@ -14,6 +14,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import shared.application.context.RequestContext;
 import shared.domain.exception.DomainConflictException;
 import shared.domain.exception.DomainNotFoundException;
 
@@ -43,12 +44,14 @@ public class ForgetPasswordService implements ForgetPasswordUseCase {
     @Inject
     @MailerName("account")
     ReactiveMailer mailer;
+    @Inject
+    RequestContext context;
 
     @ConfigProperty(name = "account.email.validation-url", defaultValue = "http://localhost:8080/account/verify-email")
     String validationUrl;
 
     @Override
-    public Uni<ForgetPasswordRequestResult> execute(ForgetPasswordCommand command) {
+    public Uni<ForgetPasswordRequestDetails> execute(ForgetPasswordCommand command) {
         if (command.email() == null || command.email().isBlank()) {
             return Uni.createFrom().failure(
                     new DomainConflictException(
@@ -77,11 +80,10 @@ public class ForgetPasswordService implements ForgetPasswordUseCase {
                     HashToken hashToken = new HashToken(
                             UUID.randomUUID(),
                             hash(tokenValue),
-                            null,
                             tokenType,
                             accountOpt.get().id(),
                             computeExpiryDate(tokenType),
-                            null,
+                            context.getExecutionContext() != null ? context.getExecutionContext().ip() : null,
                             null,
                             null,
                             null
@@ -89,7 +91,7 @@ public class ForgetPasswordService implements ForgetPasswordUseCase {
 
                     return hashTokenRepository.save(hashToken)
                             .flatMap(saved -> sendEmail(accountOpt.get().email(), tokenType, tokenValue))
-                            .replaceWith(new ForgetPasswordRequestResult(accountOpt.get().email()));
+                            .replaceWith(new ForgetPasswordRequestDetails(accountOpt.get().email()));
                 });
     }
 

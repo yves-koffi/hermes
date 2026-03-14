@@ -1,6 +1,9 @@
 package account.application.command;
 
+import account.domain.model.TokenType;
+
 public record SendVerifyCodeCommand(
-        String email
+        String email,
+        TokenType type
 ) {
 }
