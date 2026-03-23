@@ -1,6 +1,9 @@
 package account.infrastructure.api.mapper;
 
+import account.application.command.ChangePasswordCommand;
 import account.application.command.LoginCommand;
+import account.application.command.LogoutCommand;
+import account.application.command.RefreshSessionCommand;
 import account.application.command.RegisterCommand;
 import account.application.command.SocialCredentialCommand;
 import account.application.command.UpdateAccountCommand;
@@ -8,9 +11,12 @@ import account.application.result.AuthDetails;
 import account.application.result.AccountDetails;
 import account.application.result.AccountSummary;
 import account.domain.model.PhoneNumber;
+import account.infrastructure.api.dto.ChangePasswordRequest;
 import account.infrastructure.api.dto.AccountResponse;
 import account.infrastructure.api.dto.AuthResponse;
 import account.infrastructure.api.dto.LoginRequest;
+import account.infrastructure.api.dto.LogoutRequest;
+import account.infrastructure.api.dto.RefreshTokenRequest;
 import account.infrastructure.api.dto.RegisterRequest;
 import account.infrastructure.api.dto.SocialAuthRequest;
 import account.infrastructure.api.dto.UpdateAccountRequest;
@@ -23,6 +29,14 @@ public class AccountRequestMapper {
 
     public LoginCommand toCommand(LoginRequest request) {
         return new LoginCommand(request.email(), request.password());
+    }
+
+    public RefreshSessionCommand toCommand(RefreshTokenRequest request) {
+        return new RefreshSessionCommand(request.refreshToken());
+    }
+
+    public LogoutCommand toCommand(LogoutRequest request) {
+        return new LogoutCommand(request.refreshToken());
     }
 
     public RegisterCommand toCommand(RegisterRequest request) {
@@ -38,6 +52,14 @@ public class AccountRequestMapper {
         return new UpdateAccountCommand(
                 request.name(),
                 toPhoneNumber(request.prefix(), request.number())
+        );
+    }
+
+    public ChangePasswordCommand toCommand(ChangePasswordRequest request) {
+        return new ChangePasswordCommand(
+                request.currentPassword(),
+                request.newPassword(),
+                request.confirmNewPassword()
         );
     }
 

@@ -14,6 +14,13 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Implémentation du use case de mise à jour du profil courant.
+ *
+ * Le service relit le compte du contexte, fusionne les données modifiables reçues dans la
+ * commande avec les données existantes puis persiste la nouvelle version. Il ne modifie pas
+ * les éléments liés à l'authentification comme l'email, le provider ou le mot de passe.
+ */
 @ApplicationScoped
 public class UpdateAccountService implements UpdateAccountUseCase {
 

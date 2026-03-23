@@ -13,6 +13,13 @@ import shared.domain.exception.DomainNotFoundException;
 
 import java.util.Map;
 
+/**
+ * Implémentation du use case de lecture du compte courant.
+ *
+ * Le service s'appuie sur l'identifiant présent dans le contexte d'exécution,
+ * recharge le compte depuis le repository et le projette vers un résultat de lecture.
+ * Il échoue explicitement si le compte référencé par le contexte n'existe plus.
+ */
 @ApplicationScoped
 public class CurrentAccountService implements CurrentAccountUseCase {
 

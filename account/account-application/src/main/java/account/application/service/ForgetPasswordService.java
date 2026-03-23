@@ -5,6 +5,7 @@ import account.application.result.ForgetPasswordRequestDetails;
 import account.application.spi.AccountRepository;
 import account.application.spi.HashTokenRepository;
 import account.application.usecase.ForgetPasswordUseCase;
+import account.domain.model.EmailType;
 import account.domain.model.HashToken;
 import account.domain.model.TokenType;
 import io.quarkus.mailer.Mail;
@@ -27,15 +28,21 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Implémentation du use case de demande de réinitialisation de mot de passe.
+ *
+ * Le service valide l'email, vérifie l'existence du compte puis émet un token ou un code
+ * de reset dédié. Les anciens tokens de reset encore actifs pour ce compte sont supprimés
+ * avant la création du nouveau afin de ne conserver qu'un secret valide à la fois. Enfin,
+ * il envoie l'email correspondant en réutilisant les templates applicatifs.
+ */
 @ApplicationScoped
 public class ForgetPasswordService implements ForgetPasswordUseCase {
-
-    private static final String CODE_TEMPLATE_PATH = "templates/email/code_template.html";
-    private static final String TOKEN_TEMPLATE_PATH = "templates/email/token_template.html";
 
     @Inject
     AccountRepository accountRepository;
@@ -46,6 +53,10 @@ public class ForgetPasswordService implements ForgetPasswordUseCase {
     ReactiveMailer mailer;
     @Inject
     RequestContext context;
+    @Inject
+    EmailTemplateTypeResolver emailTemplateTypeResolver;
+    @Inject
+    EmailMessageSource emailMessageSource;
 
     @ConfigProperty(name = "account.email.validation-url", defaultValue = "http://localhost:8080/account/verify-email")
     String validationUrl;
@@ -62,7 +73,16 @@ public class ForgetPasswordService implements ForgetPasswordUseCase {
             );
         }
 
-        TokenType tokenType = command.type() == null ? TokenType.VERIFY_CODE : command.type();
+        TokenType tokenType = command.type() == null ? TokenType.PASSWORD_RESET_CODE : command.type();
+        if (tokenType != TokenType.PASSWORD_RESET_CODE && tokenType != TokenType.PASSWORD_RESET_LINK) {
+            return Uni.createFrom().failure(
+                    new DomainConflictException(
+                            "INVALID_RESET_TOKEN_TYPE",
+                            "account.reset_password.token.invalid_type",
+                            Map.of("type", tokenType.name())
+                    )
+            );
+        }
 
         return accountRepository.findByEmail(command.email())
                 .flatMap(accountOpt -> {
@@ -89,28 +109,54 @@ public class ForgetPasswordService implements ForgetPasswordUseCase {
                             null
                     );
 
-                    return hashTokenRepository.save(hashToken)
+                    return hashTokenRepository.deleteByAccountIdAndTokenTypes(
+                                    accountOpt.get().id(),
+                                    List.of(TokenType.PASSWORD_RESET_CODE, TokenType.PASSWORD_RESET_LINK)
+                            )
+                            .flatMap(ignored -> hashTokenRepository.save(hashToken))
                             .flatMap(saved -> sendEmail(accountOpt.get().email(), tokenType, tokenValue))
                             .replaceWith(new ForgetPasswordRequestDetails(accountOpt.get().email()));
                 });
     }
 
     private Uni<Void> sendEmail(String recipient, TokenType tokenType, String value) {
-        if (tokenType == TokenType.VERIFY_CODE) {
-            String html = loadTemplate(CODE_TEMPLATE_PATH)
+        EmailType emailType = emailTemplateTypeResolver.resolve(tokenType);
+        String language = context.getExecutionContext() != null ? context.getExecutionContext().language() : "fr";
+        String keyPrefix = emailTemplateTypeResolver.messageKeyPrefix(emailType, tokenType);
+        if (tokenType == TokenType.PASSWORD_RESET_CODE || tokenType == TokenType.VERIFY_CODE) {
+            String html = loadTemplate(emailTemplateTypeResolver.codeTemplatePath(emailType, language))
+                    .replace("{{lang}}", language)
+                    .replace("{{email_title}}", emailMessageSource.message(keyPrefix + ".subject", language))
+                    .replace("{{email_badge}}", emailMessageSource.message(keyPrefix + ".badge", language))
+                    .replace("{{email_heading}}", emailMessageSource.message(keyPrefix + ".heading", language))
+                    .replace("{{email_greeting}}", emailMessageSource.message("email.common.greeting", language))
+                    .replace("{{email_message}}", emailMessageSource.message(keyPrefix + ".message", language))
+                    .replace("{{email_code_label}}", emailMessageSource.message(keyPrefix + ".code_label", language))
+                    .replace("{{email_helper}}", emailMessageSource.message(keyPrefix + ".helper", language))
+                    .replace("{{email_footer}}", emailMessageSource.message(keyPrefix + ".footer", language))
+                    .replace("{{email_disclaimer}}", emailMessageSource.message(keyPrefix + ".disclaimer", language))
                     .replace("{{code}}", value);
-            return mailer.send(Mail.withHtml(recipient, "Code de verification", html));
+            return mailer.send(Mail.withHtml(recipient, emailMessageSource.message(emailTemplateTypeResolver.subject(emailType, tokenType, language), language), html));
         }
 
         String link = buildValidationLink(value);
-        String html = loadTemplate(TOKEN_TEMPLATE_PATH)
+        String html = loadTemplate(emailTemplateTypeResolver.linkTemplatePath(emailType, language))
+                .replace("{{lang}}", language)
+                .replace("{{email_title}}", emailMessageSource.message(keyPrefix + ".subject", language))
+                .replace("{{email_badge}}", emailMessageSource.message(keyPrefix + ".badge", language))
+                .replace("{{email_heading}}", emailMessageSource.message(keyPrefix + ".heading", language))
+                .replace("{{email_greeting}}", emailMessageSource.message("email.common.greeting", language))
+                .replace("{{email_message}}", emailMessageSource.message(keyPrefix + ".message", language))
+                .replace("{{email_action_label}}", emailMessageSource.message(keyPrefix + ".action_label", language))
+                .replace("{{email_helper}}", emailMessageSource.message(keyPrefix + ".helper", language))
+                .replace("{{email_footer}}", emailMessageSource.message(keyPrefix + ".footer", language))
                 .replace("{{token}}", value)
                 .replace("{{validation_url}}", link);
-        return mailer.send(Mail.withHtml(recipient, "Lien de verification", html));
+        return mailer.send(Mail.withHtml(recipient, emailMessageSource.message(emailTemplateTypeResolver.subject(emailType, tokenType, language), language), html));
     }
 
     private String generateToken(TokenType tokenType) {
-        return tokenType == TokenType.VERIFY_CODE
+        return tokenType == TokenType.PASSWORD_RESET_CODE || tokenType == TokenType.VERIFY_CODE
                 ? String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1_000_000))
                 : UUID.randomUUID().toString();
     }
@@ -120,6 +166,11 @@ public class ForgetPasswordService implements ForgetPasswordUseCase {
         return switch (tokenType) {
             case VERIFY_CODE -> now.plusMinutes(10);
             case VERIFY_TOKEN -> now.plusHours(24);
+            case EMAIL_VERIFICATION_CODE -> now.plusMinutes(10);
+            case EMAIL_VERIFICATION_LINK -> now.plusHours(24);
+            case PASSWORD_RESET_CODE -> now.plusMinutes(10);
+            case PASSWORD_RESET_LINK -> now.plusHours(24);
+            case SESSION_REFRESH -> now.plusDays(30);
             case REFRESH_TOKEN -> now.plusDays(30);
         };
     }

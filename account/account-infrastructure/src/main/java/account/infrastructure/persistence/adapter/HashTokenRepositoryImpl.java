@@ -2,6 +2,7 @@ package account.infrastructure.persistence.adapter;
 
 import account.application.spi.HashTokenRepository;
 import account.domain.model.HashToken;
+import account.domain.model.TokenType;
 import account.infrastructure.persistence.mapper.HashTokenMapper;
 import account.infrastructure.persistence.repository.HashTokenEntityRepository;
 import io.smallrye.mutiny.Uni;
@@ -49,5 +50,11 @@ public class HashTokenRepositoryImpl implements HashTokenRepository {
     @Override
     public Uni<Void> deleteById(UUID id) {
         return hashTokenEntityRepository.deleteById(id).replaceWithVoid();
+    }
+
+    @Override
+    public Uni<Void> deleteByAccountIdAndTokenTypes(UUID accountId, List<TokenType> tokenTypes) {
+        return hashTokenEntityRepository.delete("accountId = ?1 and tokenType in ?2", accountId, tokenTypes)
+                .replaceWithVoid();
     }
 }

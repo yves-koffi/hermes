@@ -15,6 +15,14 @@ import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 import java.util.HexFormat;
 
+/**
+ * Implémentation technique de validation d'un token one-shot.
+ *
+ * Le service convertit la valeur brute reçue en hash SHA-256, recherche l'entrée
+ * correspondante en base puis vérifie son type, son état de révocation et sa date
+ * d'expiration. Il ne réalise aucune transition métier; il expose uniquement un état
+ * booléen de validité.
+ */
 @ApplicationScoped
 public class CheckTokenService implements CheckTokenUseCase {
 

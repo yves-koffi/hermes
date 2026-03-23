@@ -10,19 +10,23 @@ import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import shared.application.spi.JwtTokenProvider;
 import shared.domain.exception.AuthenticationException;
 
-import java.util.List;
-import java.util.UUID;
-
+/**
+ * Implémentation du use case d'authentification locale.
+ *
+ * Le service recherche le compte par email, vérifie que le provider est compatible avec
+ * une authentification par mot de passe, contrôle la validité du secret soumis puis refuse
+ * les comptes basic non encore activés. En cas de succès, il délègue à la gestion de session
+ * la création de la session serveur et l'émission des tokens.
+ */
 @ApplicationScoped
 public class LoginService implements LoginUseCase {
 
     @Inject
     AccountRepository accountRepository;
     @Inject
-    JwtTokenProvider jwtTokenProvider;
+    AuthSessionTokenService authSessionTokenService;
 
     @Override
     public Uni<AuthDetails> execute(LoginCommand command) {
@@ -41,7 +45,7 @@ public class LoginService implements LoginUseCase {
                         return Uni.createFrom().failure(AuthenticationException.accountUnverified(account.email()));
                     }
 
-                    return Uni.createFrom().item(toAuthResult(account));
+                    return authSessionTokenService.issueTokens(account, null);
                 });
     }
 
@@ -50,28 +54,5 @@ public class LoginService implements LoginUseCase {
             return false;
         }
         return account.password() != null && BcryptUtil.matches(password, account.password());
-    }
-
-    private AuthDetails toAuthResult(Account account) {
-        UUID accountId = account.id();
-        String accessToken = jwtTokenProvider.generateAccessToken(
-                account.email(),
-                accountId,
-                List.of("USER"),
-                null
-        );
-        String refreshToken = jwtTokenProvider.generateRefreshToken(
-                UUID.randomUUID().toString(),
-                accountId,
-                null
-        );
-
-        return new AuthDetails(
-                accessToken,
-                refreshToken,
-                "Bearer",
-                0L,
-                0L
-        );
     }
 }

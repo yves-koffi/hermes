@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public record ExecutionContext(
         UUID accountId,
-        String ip
+        String ip,
+        String language
 ) {
 }

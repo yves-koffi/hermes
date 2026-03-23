@@ -1,6 +1,7 @@
 package account.application.spi;
 
 import account.domain.model.HashToken;
+import account.domain.model.TokenType;
 import io.smallrye.mutiny.Uni;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface HashTokenRepository {
     Uni<List<HashToken>> findByAccountId(UUID accountId);
 
     Uni<Void> deleteById(UUID id);
+
+    Uni<Void> deleteByAccountIdAndTokenTypes(UUID accountId, List<TokenType> tokenTypes);
 }

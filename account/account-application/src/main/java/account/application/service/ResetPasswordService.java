@@ -3,6 +3,7 @@ package account.application.service;
 import account.application.command.ResetPasswordCommand;
 import account.application.result.PasswordResetDetails;
 import account.application.spi.AccountRepository;
+import account.application.spi.AuthSessionRepository;
 import account.application.spi.HashTokenRepository;
 import account.application.usecase.ResetPasswordUseCase;
 import account.domain.model.Account;
@@ -19,6 +20,14 @@ import shared.domain.exception.DomainNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
+/**
+ * Implémentation du use case de réinitialisation effective du mot de passe.
+ *
+ * Le service valide le token de reset, vérifie le type attendu, contrôle l'expiration
+ * puis recharge le compte concerné. Après mise à jour du mot de passe, il révoque toutes
+ * les sessions actives du compte et supprime le token de reset consommé pour empêcher
+ * toute réutilisation.
+ */
 @ApplicationScoped
 public class ResetPasswordService implements ResetPasswordUseCase {
 
@@ -26,6 +35,8 @@ public class ResetPasswordService implements ResetPasswordUseCase {
     HashTokenRepository hashTokenRepository;
     @Inject
     AccountRepository accountRepository;
+    @Inject
+    AuthSessionRepository authSessionRepository;
 
     @Override
     public Uni<PasswordResetDetails> execute(ResetPasswordCommand command) {
@@ -70,7 +81,8 @@ public class ResetPasswordService implements ResetPasswordUseCase {
                     }
 
                     HashToken token = tokenOpt.get();
-                    if (token.tokenType() != TokenType.VERIFY_CODE && token.tokenType() != TokenType.VERIFY_TOKEN) {
+                    if (token.tokenType() != TokenType.PASSWORD_RESET_CODE
+                            && token.tokenType() != TokenType.PASSWORD_RESET_LINK) {
                         return Uni.createFrom().failure(
                                 new DomainConflictException(
                                         "INVALID_RESET_TOKEN_TYPE",
@@ -128,8 +140,9 @@ public class ResetPasswordService implements ResetPasswordUseCase {
                                 );
 
                                 return accountRepository.save(updatedAccount)
-                                        .flatMap(saved -> hashTokenRepository.deleteById(token.id())
-                                                .replaceWith(new PasswordResetDetails(now)));
+                                        .flatMap(saved -> authSessionRepository.revokeAllByAccountId(saved.id(), now)
+                                                .flatMap(ignored -> hashTokenRepository.deleteById(token.id())
+                                                        .replaceWith(new PasswordResetDetails(now))));
                             });
                 });
     }

@@ -21,6 +21,14 @@ import java.time.OffsetDateTime;
 import java.util.HexFormat;
 import java.util.Map;
 
+/**
+ * Implémentation du use case de validation d'adresse email.
+ *
+ * Le service reçoit un token brut, le hash avant recherche, vérifie qu'il correspond bien
+ * à un token de vérification encore actif puis recharge le compte ciblé. Si le compte n'est
+ * pas encore activé, il renseigne la date d'activation et persiste la nouvelle version.
+ * Le token consommé est ensuite supprimé pour garantir un usage unique.
+ */
 @ApplicationScoped
 public class VerifyEmailService implements VerifyEmailUseCase {
 
@@ -55,7 +63,8 @@ public class VerifyEmailService implements VerifyEmailUseCase {
                     }
 
                     HashToken token = tokenOpt.get();
-                    if (token.tokenType() != TokenType.VERIFY_TOKEN && token.tokenType() != TokenType.VERIFY_CODE) {
+                    if (token.tokenType() != TokenType.EMAIL_VERIFICATION_LINK
+                            && token.tokenType() != TokenType.EMAIL_VERIFICATION_CODE) {
                         return Uni.createFrom().failure(
                                 new DomainConflictException(
                                         "INVALID_VERIFY_TOKEN_TYPE",
@@ -88,6 +97,10 @@ public class VerifyEmailService implements VerifyEmailUseCase {
                                 }
 
                                 Account current = accountOpt.get();
+                                if (current.isActivated()) {
+                                    return hashTokenRepository.deleteById(token.id())
+                                            .replaceWith(new AccountVerificationDetails(current.activatedAt()));
+                                }
                                 OffsetDateTime verifiedAt = current.activatedAt() == null
                                         ? OffsetDateTime.now()
                                         : current.activatedAt();

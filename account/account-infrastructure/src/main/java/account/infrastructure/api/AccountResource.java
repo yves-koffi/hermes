@@ -1,15 +1,22 @@
 package account.infrastructure.api;
 
 
+import account.application.usecase.ChangePasswordUseCase;
 import account.application.result.RegisterDetails;
+import account.application.usecase.LogoutAllSessionsUseCase;
+import account.application.usecase.LogoutUseCase;
+import account.application.usecase.RefreshSessionUseCase;
 import account.application.usecase.RegisterUseCase;
 import account.application.usecase.SocialAuthUseCase;
 import account.application.usecase.UpdateAccountUseCase;
 import account.application.usecase.LoginUseCase;
 import account.application.usecase.CurrentAccountUseCase;
+import account.infrastructure.api.dto.ChangePasswordRequest;
 import account.infrastructure.api.dto.AccountResponse;
 import account.infrastructure.api.dto.AuthResponse;
 import account.infrastructure.api.dto.LoginRequest;
+import account.infrastructure.api.dto.LogoutRequest;
+import account.infrastructure.api.dto.RefreshTokenRequest;
 import account.infrastructure.api.dto.RegisterRequest;
 import account.infrastructure.api.dto.SocialAuthRequest;
 import account.infrastructure.api.dto.UpdateAccountRequest;
@@ -28,6 +35,12 @@ public class AccountResource {
     @Inject
     LoginUseCase loginUseCase;
     @Inject
+    RefreshSessionUseCase refreshSessionUseCase;
+    @Inject
+    LogoutUseCase logoutUseCase;
+    @Inject
+    LogoutAllSessionsUseCase logoutAllSessionsUseCase;
+    @Inject
     SocialAuthUseCase socialAuthUseCase;
     @Inject
     RegisterUseCase registerUseCase;
@@ -35,6 +48,8 @@ public class AccountResource {
     UpdateAccountUseCase updateAccountUseCase;
     @Inject
     CurrentAccountUseCase currentAccountUseCase;
+    @Inject
+    ChangePasswordUseCase changePasswordUseCase;
     @Inject
     AccountRequestMapper accountRequestMapper;
 
@@ -44,6 +59,28 @@ public class AccountResource {
         return loginUseCase.execute(accountRequestMapper.toCommand(request))
                 .map(accountRequestMapper::toResponse)
                 .map(RestResponse::ok);
+    }
+
+    @POST
+    @Path("refresh")
+    public Uni<RestResponse<AuthResponse>> refresh(RefreshTokenRequest request) {
+        return refreshSessionUseCase.execute(accountRequestMapper.toCommand(request))
+                .map(accountRequestMapper::toResponse)
+                .map(RestResponse::ok);
+    }
+
+    @POST
+    @Path("logout")
+    public Uni<RestResponse<Void>> logout(LogoutRequest request) {
+        return logoutUseCase.execute(accountRequestMapper.toCommand(request))
+                .replaceWith(RestResponse.noContent());
+    }
+
+    @POST
+    @Path("logout-all")
+    public Uni<RestResponse<Void>> logoutAll() {
+        return logoutAllSessionsUseCase.execute()
+                .replaceWith(RestResponse.noContent());
     }
 
     @POST
@@ -64,6 +101,13 @@ public class AccountResource {
     @PUT
     public Uni<RestResponse<Void>> update(UpdateAccountRequest request) {
         return updateAccountUseCase.execute(accountRequestMapper.toCommand(request))
+                .replaceWith(RestResponse.noContent());
+    }
+
+    @POST
+    @Path("change-password")
+    public Uni<RestResponse<Void>> changePassword(ChangePasswordRequest request) {
+        return changePasswordUseCase.execute(accountRequestMapper.toCommand(request))
                 .replaceWith(RestResponse.noContent());
     }
 
