@@ -28,7 +28,7 @@ public class HashTokenEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "token_type", length = 16)
-    public TokenType tokenType = TokenType.VERIFY_CODE;
+    public TokenType tokenType = TokenType.EMAIL_VERIFICATION_CODE;
 
     @Column(name = "account_id", nullable = false)
     public UUID accountId;

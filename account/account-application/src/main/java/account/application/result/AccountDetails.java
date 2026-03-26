@@ -14,6 +14,8 @@ public record AccountDetails(
         String avatarUrl,
         Provider provider,
         OffsetDateTime activatedAt,
-        OffsetDateTime createdAt
+        OffsetDateTime disabledAt,
+        OffsetDateTime createdAt,
+        OffsetDateTime updatedAt
 ) {
 }

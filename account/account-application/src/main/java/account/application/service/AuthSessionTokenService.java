@@ -1,9 +1,10 @@
 package account.application.service;
 
-import account.application.result.AuthDetails;
+import account.application.result.AuthResult;
 import account.application.spi.AuthSessionRepository;
 import account.domain.model.Account;
 import account.domain.model.AuthSession;
+import account.domain.model.Provider;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.smallrye.jwt.auth.principal.JWTParser;
 import io.smallrye.jwt.auth.principal.ParseException;
@@ -47,15 +48,17 @@ public class AuthSessionTokenService {
     @ConfigProperty(name = "jwt.refresh-token-validity", defaultValue = "10080")
     long refreshTokenValidity;
 
-    public Uni<AuthDetails> issueTokens(Account account, UUID rotatedFromSessionId) {
+    public Uni<AuthResult> issueTokens(Account account, UUID rotatedFromSessionId) {
         UUID sessionId = UUID.randomUUID();
         String rawRefreshToken = UUID.randomUUID().toString();
         OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime accessExpiresAt = now.plusMinutes(accessTokenValidity);
+        OffsetDateTime refreshExpiresAt = now.plusMinutes(refreshTokenValidity);
         AuthSession session = new AuthSession(
                 sessionId,
                 account.id(),
                 BcryptUtil.bcryptHash(rawRefreshToken),
-                now.plusMinutes(refreshTokenValidity),
+                refreshExpiresAt,
                 context.getExecutionContext() != null ? context.getExecutionContext().ip() : null,
                 null,
                 rotatedFromSessionId,
@@ -66,7 +69,9 @@ public class AuthSessionTokenService {
         );
 
         return authSessionRepository.save(session)
-                .map(saved -> new AuthDetails(
+                .map(saved -> new AuthResult(
+                        account.id(),
+                        account.isActivated() || account.provider() != Provider.BASIC,
                         jwtTokenProvider.generateAccessToken(
                                 account.email(),
                                 account.id(),
@@ -80,7 +85,9 @@ public class AuthSessionTokenService {
                         ),
                         "Bearer",
                         accessTokenValidity,
-                        refreshTokenValidity
+                        refreshTokenValidity,
+                        accessExpiresAt,
+                        refreshExpiresAt
                 ));
     }
 
@@ -114,7 +121,7 @@ public class AuthSessionTokenService {
                 session.ipAddress(),
                 session.userAgent(),
                 session.rotatedFromSessionId(),
-                revokedAt,
+                session.lastUsedAt(),
                 revokedAt,
                 session.createdAt(),
                 revokedAt

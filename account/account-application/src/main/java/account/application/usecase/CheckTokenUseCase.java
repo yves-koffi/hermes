@@ -1,7 +1,7 @@
 package account.application.usecase;
 
 import account.application.command.CheckTokenCommand;
-import account.application.result.CheckTokenDetails;
+import account.application.result.CheckTokenResult;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -12,5 +12,5 @@ import io.smallrye.mutiny.Uni;
  * du flux appelant; il fournit seulement une réponse booléenne sur la validité courante.
  */
 public interface CheckTokenUseCase {
-    Uni<CheckTokenDetails> execute(CheckTokenCommand command);
+    Uni<CheckTokenResult> execute(CheckTokenCommand command);
 }

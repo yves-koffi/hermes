@@ -1,6 +1,6 @@
 package account.infrastructure.api.dto;
 
-public record ChangePasswordRequest(
+public record ChangePasswordRequestDto(
         String currentPassword,
         String newPassword,
         String confirmNewPassword

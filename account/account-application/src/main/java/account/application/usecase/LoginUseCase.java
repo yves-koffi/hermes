@@ -1,7 +1,7 @@
 package account.application.usecase;
 
 import account.application.command.LoginCommand;
-import account.application.result.AuthDetails;
+import account.application.result.AuthResult;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -13,5 +13,5 @@ import io.smallrye.mutiny.Uni;
  * par les clients.
  */
 public interface LoginUseCase {
-    Uni<AuthDetails> execute(LoginCommand command);
+    Uni<AuthResult> execute(LoginCommand command);
 }

@@ -32,7 +32,9 @@ public class AccountResultMapper {
                 account.avatarUrl(),
                 account.provider(),
                 account.activatedAt(),
-                account.createdAt()
+                account.disabledAt(),
+                account.createdAt(),
+                account.updatedAt()
         );
     }
 }

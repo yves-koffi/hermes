@@ -1,7 +1,7 @@
 package account.application.usecase;
 
 import account.application.command.ForgetPasswordCommand;
-import account.application.result.ForgetPasswordRequestDetails;
+import account.application.result.ForgetPasswordResult;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -12,5 +12,5 @@ import io.smallrye.mutiny.Uni;
  * Ce flux prépare le reset mais ne change pas encore le mot de passe.
  */
 public interface ForgetPasswordUseCase {
-    Uni<ForgetPasswordRequestDetails> execute(ForgetPasswordCommand command);
+    Uni<ForgetPasswordResult> execute(ForgetPasswordCommand command);
 }

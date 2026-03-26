@@ -1,7 +1,7 @@
 package account.application.usecase;
 
 import account.application.command.SocialCredentialCommand;
-import account.application.result.AuthDetails;
+import account.application.result.AuthResult;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -12,5 +12,5 @@ import io.smallrye.mutiny.Uni;
  * d'ouvrir une session et d'émettre les tokens applicatifs.
  */
 public interface SocialAuthUseCase {
-    Uni<AuthDetails> execute(SocialCredentialCommand command);
+    Uni<AuthResult> execute(SocialCredentialCommand command);
 }

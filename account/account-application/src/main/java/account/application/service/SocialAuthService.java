@@ -3,7 +3,7 @@ package account.application.service;
 import account.application.command.CreateAccountCommand;
 import account.application.command.SocialCredentialCommand;
 import account.application.mapper.AccountCommandMapper;
-import account.application.result.AuthDetails;
+import account.application.result.AuthResult;
 import account.application.spi.AccountRepository;
 import account.application.usecase.SocialAuthUseCase;
 import account.domain.model.Account;
@@ -11,6 +11,7 @@ import account.domain.model.Provider;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import shared.domain.exception.AuthenticationException;
 import shared.domain.exception.DomainConflictException;
 
 import java.util.Map;
@@ -34,11 +35,14 @@ public class SocialAuthService implements SocialAuthUseCase {
     AccountCommandMapper accountCommandMapper;
 
     @Override
-    public Uni<AuthDetails> execute(SocialCredentialCommand command) {
+    public Uni<AuthResult> execute(SocialCredentialCommand command) {
         return accountRepository.findByEmail(command.email())
                 .flatMap(accountOpt -> {
                     if (accountOpt.isPresent()) {
                         Account existing = accountOpt.get();
+                        if (existing.isDisabled()) {
+                            return Uni.createFrom().failure(AuthenticationException.accountDisabled(existing.email()));
+                        }
                         if (existing.provider() == Provider.BASIC) {
                             return Uni.createFrom().failure(
                                     new DomainConflictException(

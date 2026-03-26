@@ -40,12 +40,15 @@ public class AccountEntity {
     @Column(length = 255, name = "password")
     public String password;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = ProviderConverter.class)
     @Column(name = "provider", nullable = false, length = 24)
-    public Provider provider = Provider.GOOGLE;
+    public Provider provider;
 
     @Column(name = "activated_at")
     public OffsetDateTime activatedAt;
+
+    @Column(name = "disabled_at")
+    public OffsetDateTime disabledAt;
 
     @Column(name = "created_at", insertable = false, updatable = false)
     public OffsetDateTime createdAt;

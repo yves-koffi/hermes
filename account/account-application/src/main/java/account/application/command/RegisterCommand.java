@@ -6,6 +6,7 @@ public record RegisterCommand(
         String name,
         String email,
         String password,
-        PhoneNumber phoneNumber
+        PhoneNumber phoneNumber,
+        boolean requiredVerifyEmail
 ) {
 }

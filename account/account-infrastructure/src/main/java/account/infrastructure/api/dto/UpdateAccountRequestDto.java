@@ -1,8 +1,9 @@
 package account.infrastructure.api.dto;
 
-public record UpdateAccountRequest(
+public record UpdateAccountRequestDto(
         String name,
         String prefix,
-        String number
+        String number,
+        String avatarUrl
 ) {
 }

@@ -3,16 +3,14 @@ package account.application.service;
 import account.application.command.UpdateAccountCommand;
 import account.application.spi.AccountRepository;
 import account.application.usecase.UpdateAccountUseCase;
-import account.domain.model.Account;
+import account.domain.model.PhoneNumber;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import shared.application.context.RequestContext;
-import shared.domain.exception.DomainNotFoundException;
+import shared.domain.exception.DomainConflictException;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Implémentation du use case de mise à jour du profil courant.
@@ -25,41 +23,54 @@ import java.util.UUID;
 public class UpdateAccountService implements UpdateAccountUseCase {
 
     @Inject
-    RequestContext context;
+    CurrentAuthenticatedAccountService currentAuthenticatedAccountService;
     @Inject
     AccountRepository accountRepository;
 
     @Override
     public Uni<Void> execute(UpdateAccountCommand command) {
-        UUID accountId = context.getExecutionContext().accountId();
-        return accountRepository.findById(accountId)
-                .flatMap(accountOpt -> {
-                    if (accountOpt.isEmpty()) {
-                        return Uni.createFrom().failure(
-                                new DomainNotFoundException(
-                                        "ACCOUNT_NOT_FOUND",
-                                        "account.not_found",
-                                        Map.of("id", accountId)
-                                )
-                        );
-                    }
+        if (command.name() != null && command.name().isBlank()) {
+            return Uni.createFrom().failure(
+                    new DomainConflictException(
+                            "INVALID_ACCOUNT_NAME",
+                            "account.name.invalid",
+                            Map.of()
+                    )
+            );
+        }
+        if (command.phoneNumber() != null && !isPhoneNumberValid(command.phoneNumber())) {
+            return Uni.createFrom().failure(
+                    new DomainConflictException(
+                            "INVALID_PHONE_NUMBER",
+                            "account.phone.invalid",
+                            Map.of()
+                    )
+            );
+        }
 
-                    Account current = accountOpt.get();
-                    Account updated = new Account(
-                            current.id(),
-                            command.name(),
-                            current.email(),
-                            command.phoneNumber(),
-                            current.password(),
-                            current.avatarUrl(),
-                            current.providerId(),
-                            current.provider(),
-                            current.activatedAt(),
-                            current.createdAt(),
-                            OffsetDateTime.now()
-                    );
+        return currentAuthenticatedAccountService.requireCurrentAccount()
+                .flatMap(current -> accountRepository.save(
+                        current.withProfile(
+                                command.name() == null ? current.name() : command.name().trim(),
+                                command.phoneNumber() == null ? current.phoneNumber() : command.phoneNumber(),
+                                command.avatarUrl() == null ? current.avatarUrl() : normalizeAvatarUrl(command.avatarUrl()),
+                                OffsetDateTime.now()
+                        )
+                ).replaceWithVoid());
+    }
 
-                    return accountRepository.save(updated).replaceWithVoid();
-                });
+    private boolean isPhoneNumberValid(PhoneNumber phoneNumber) {
+        return phoneNumber.prefix() != null
+                && !phoneNumber.prefix().isBlank()
+                && phoneNumber.number() != null
+                && !phoneNumber.number().isBlank();
+    }
+
+    private String normalizeAvatarUrl(String avatarUrl) {
+        if (avatarUrl == null) {
+            return null;
+        }
+        String trimmed = avatarUrl.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

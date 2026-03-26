@@ -23,6 +23,12 @@
             <artifactId>account-application</artifactId>
             <version>${app.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cloud.arrah</groupId>
+            <artifactId>shared-infrastructure</artifactId>
+            <version>${app.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Validation -->
         <dependency>
             <groupId>jakarta.validation</groupId>
@@ -69,6 +75,10 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-mailer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-vertx</artifactId>
         </dependency>
         <!-- for Flyway -->
         <dependency>

@@ -2,24 +2,24 @@ package account.infrastructure.api;
 
 
 import account.application.usecase.ChangePasswordUseCase;
-import account.application.result.RegisterDetails;
-import account.application.usecase.LogoutAllSessionsUseCase;
-import account.application.usecase.LogoutUseCase;
-import account.application.usecase.RefreshSessionUseCase;
+import account.application.usecase.ChangeEmailUseCase;
+import account.application.usecase.CheckTokenUseCase;
+import account.application.usecase.DeactivateAccountUseCase;
+import account.application.usecase.DeleteAccountUseCase;
+import account.application.result.RegisterResult;
+import account.application.result.CheckTokenResult;
+import account.application.usecase.SecurityHistoryUseCase;
 import account.application.usecase.RegisterUseCase;
-import account.application.usecase.SocialAuthUseCase;
 import account.application.usecase.UpdateAccountUseCase;
-import account.application.usecase.LoginUseCase;
 import account.application.usecase.CurrentAccountUseCase;
-import account.infrastructure.api.dto.ChangePasswordRequest;
-import account.infrastructure.api.dto.AccountResponse;
-import account.infrastructure.api.dto.AuthResponse;
-import account.infrastructure.api.dto.LoginRequest;
-import account.infrastructure.api.dto.LogoutRequest;
-import account.infrastructure.api.dto.RefreshTokenRequest;
-import account.infrastructure.api.dto.RegisterRequest;
-import account.infrastructure.api.dto.SocialAuthRequest;
-import account.infrastructure.api.dto.UpdateAccountRequest;
+import account.infrastructure.api.dto.CheckTokenRequestDto;
+import account.infrastructure.api.dto.ChangeEmailRequestDto;
+import account.infrastructure.api.dto.ChangeEmailResponseDto;
+import account.infrastructure.api.dto.ChangePasswordRequestDto;
+import account.infrastructure.api.dto.AccountResponseDto;
+import account.infrastructure.api.dto.AccountSecurityEventResponseDto;
+import account.infrastructure.api.dto.RegisterRequestDto;
+import account.infrastructure.api.dto.UpdateAccountRequestDto;
 import account.infrastructure.api.mapper.AccountRequestMapper;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
@@ -33,16 +33,6 @@ import org.jboss.resteasy.reactive.RestResponse;
 public class AccountResource {
 
     @Inject
-    LoginUseCase loginUseCase;
-    @Inject
-    RefreshSessionUseCase refreshSessionUseCase;
-    @Inject
-    LogoutUseCase logoutUseCase;
-    @Inject
-    LogoutAllSessionsUseCase logoutAllSessionsUseCase;
-    @Inject
-    SocialAuthUseCase socialAuthUseCase;
-    @Inject
     RegisterUseCase registerUseCase;
     @Inject
     UpdateAccountUseCase updateAccountUseCase;
@@ -51,71 +41,75 @@ public class AccountResource {
     @Inject
     ChangePasswordUseCase changePasswordUseCase;
     @Inject
+    ChangeEmailUseCase changeEmailUseCase;
+
+    @Inject
+    CheckTokenUseCase checkTokenUseCase;
+    @Inject
+    DeactivateAccountUseCase deactivateAccountUseCase;
+    @Inject
+    DeleteAccountUseCase deleteAccountUseCase;
+    @Inject
     AccountRequestMapper accountRequestMapper;
 
-    @POST
-    @Path("login")
-    public Uni<RestResponse<AuthResponse>> login(LoginRequest request) {
-        return loginUseCase.execute(accountRequestMapper.toCommand(request))
-                .map(accountRequestMapper::toResponse)
-                .map(RestResponse::ok);
-    }
+
 
     @POST
-    @Path("refresh")
-    public Uni<RestResponse<AuthResponse>> refresh(RefreshTokenRequest request) {
-        return refreshSessionUseCase.execute(accountRequestMapper.toCommand(request))
-                .map(accountRequestMapper::toResponse)
-                .map(RestResponse::ok);
-    }
-
-    @POST
-    @Path("logout")
-    public Uni<RestResponse<Void>> logout(LogoutRequest request) {
-        return logoutUseCase.execute(accountRequestMapper.toCommand(request))
-                .replaceWith(RestResponse.noContent());
-    }
-
-    @POST
-    @Path("logout-all")
-    public Uni<RestResponse<Void>> logoutAll() {
-        return logoutAllSessionsUseCase.execute()
-                .replaceWith(RestResponse.noContent());
-    }
-
-    @POST
-    @Path("social/login")
-    public Uni<RestResponse<AuthResponse>> socialAuth(SocialAuthRequest request) {
-        return socialAuthUseCase.execute(accountRequestMapper.toCommand(request))
-                .map(accountRequestMapper::toResponse)
-                .map(RestResponse::ok);
-    }
-
-    @POST
-    @Path("register")
-    public Uni<RestResponse<RegisterDetails>> register(RegisterRequest request) {
+    @Path("")
+    public Uni<RestResponse<RegisterResult>> register(RegisterRequestDto request) {
         return registerUseCase.execute(accountRequestMapper.toCommand(request))
                 .map(RestResponse::ok);
     }
 
+    @GET
+    @Path("current")
+    public Uni<RestResponse<AccountResponseDto>> current() {
+        return currentAccountUseCase.execute()
+                .map(accountRequestMapper::toResponse)
+                .map(RestResponse::ok);
+    }
+
     @PUT
-    public Uni<RestResponse<Void>> update(UpdateAccountRequest request) {
+    @Path("")
+    public Uni<RestResponse<Void>> update(UpdateAccountRequestDto request) {
         return updateAccountUseCase.execute(accountRequestMapper.toCommand(request))
                 .replaceWith(RestResponse.noContent());
     }
 
     @POST
+    @Path("deactivate")
+    public Uni<RestResponse<Void>> deactivate() {
+        return deactivateAccountUseCase.execute()
+                .replaceWith(RestResponse.noContent());
+    }
+
+    @DELETE
+    @Path("")
+    public Uni<RestResponse<Void>> delete() {
+        return deleteAccountUseCase.execute()
+                .replaceWith(RestResponse.noContent());
+    }
+
+    @POST
     @Path("change-password")
-    public Uni<RestResponse<Void>> changePassword(ChangePasswordRequest request) {
+    public Uni<RestResponse<Void>> changePassword(ChangePasswordRequestDto request) {
         return changePasswordUseCase.execute(accountRequestMapper.toCommand(request))
                 .replaceWith(RestResponse.noContent());
     }
 
-    @GET
-    @Path("current")
-    public Uni<RestResponse<AccountResponse>> current() {
-        return currentAccountUseCase.execute()
+    @POST
+    @Path("change-email")
+    public Uni<RestResponse<ChangeEmailResponseDto>> changeEmail(ChangeEmailRequestDto request) {
+        return changeEmailUseCase.execute(accountRequestMapper.toCommand(request))
                 .map(accountRequestMapper::toResponse)
                 .map(RestResponse::ok);
     }
+
+    @POST
+    @Path("check-token")
+    public Uni<RestResponse<CheckTokenResult>> checkToken(CheckTokenRequestDto request) {
+        return checkTokenUseCase.execute(accountRequestMapper.toCommand(request))
+                .map(RestResponse::ok);
+    }
+
 }

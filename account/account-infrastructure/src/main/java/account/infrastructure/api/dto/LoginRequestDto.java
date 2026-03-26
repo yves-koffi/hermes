@@ -1,6 +1,6 @@
 package account.infrastructure.api.dto;
 
-public record LoginRequest(
+public record LoginRequestDto(
         String email,
         String password
 ) {

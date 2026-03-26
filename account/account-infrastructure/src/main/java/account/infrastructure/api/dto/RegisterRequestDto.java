@@ -1,10 +1,11 @@
 package account.infrastructure.api.dto;
 
-public record RegisterRequest(
+public record RegisterRequestDto(
         String name,
         String email,
         String password,
         String prefix,
-        String number
+        String number,
+        boolean requiredVerifyEmail
 ) {
 }

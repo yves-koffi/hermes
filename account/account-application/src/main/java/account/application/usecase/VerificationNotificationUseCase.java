@@ -1,7 +1,7 @@
 package account.application.usecase;
 
 import account.application.command.SendVerifyCodeCommand;
-import account.application.result.VerifyCodeSentDetails;
+import account.application.result.VerifyCodeSentResult;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -12,5 +12,5 @@ import io.smallrye.mutiny.Uni;
  * ou lors d'une demande explicite de renvoi.
  */
 public interface VerificationNotificationUseCase {
-    Uni<VerifyCodeSentDetails> execute(SendVerifyCodeCommand command);
+    Uni<VerifyCodeSentResult> execute(SendVerifyCodeCommand command);
 }

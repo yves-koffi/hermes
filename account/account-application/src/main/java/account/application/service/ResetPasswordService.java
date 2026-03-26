@@ -1,12 +1,13 @@
 package account.application.service;
 
 import account.application.command.ResetPasswordCommand;
-import account.application.result.PasswordResetDetails;
+import account.application.result.PasswordResetResult;
 import account.application.spi.AccountRepository;
 import account.application.spi.AuthSessionRepository;
 import account.application.spi.HashTokenRepository;
 import account.application.usecase.ResetPasswordUseCase;
 import account.domain.model.Account;
+import account.domain.model.AccountSecurityEventType;
 import account.domain.model.HashToken;
 import account.domain.model.Provider;
 import account.domain.model.TokenType;
@@ -37,10 +38,14 @@ public class ResetPasswordService implements ResetPasswordUseCase {
     AccountRepository accountRepository;
     @Inject
     AuthSessionRepository authSessionRepository;
+    @Inject
+    OneTimeTokenService oneTimeTokenService;
+    @Inject
+    AccountSecurityEventService accountSecurityEventService;
 
     @Override
-    public Uni<PasswordResetDetails> execute(ResetPasswordCommand command) {
-        if (command.hashToken() == null || command.hashToken().isBlank()) {
+    public Uni<PasswordResetResult> execute(ResetPasswordCommand command) {
+        if (command.token() == null || command.token().isBlank()) {
             return Uni.createFrom().failure(
                     new DomainConflictException(
                             "INVALID_RESET_TOKEN",
@@ -68,14 +73,14 @@ public class ResetPasswordService implements ResetPasswordUseCase {
             );
         }
 
-        return hashTokenRepository.findByHashToken(command.hashToken())
+        return hashTokenRepository.findByHashToken(oneTimeTokenService.hash(command.token()))
                 .flatMap(tokenOpt -> {
                     if (tokenOpt.isEmpty()) {
                         return Uni.createFrom().failure(
                                 new DomainNotFoundException(
                                         "RESET_TOKEN_NOT_FOUND",
                                         "account.reset_password.token.not_found",
-                                        Map.of("hashToken", command.hashToken())
+                                        Map.of("token", command.token())
                                 )
                         );
                     }
@@ -125,24 +130,20 @@ public class ResetPasswordService implements ResetPasswordUseCase {
                                 }
 
                                 OffsetDateTime now = OffsetDateTime.now();
-                                Account updatedAccount = new Account(
-                                        account.id(),
-                                        account.name(),
-                                        account.email(),
-                                        account.phoneNumber(),
-                                        BcryptUtil.bcryptHash(command.newPassword()),
-                                        account.avatarUrl(),
-                                        account.providerId(),
-                                        account.provider(),
-                                        account.activatedAt(),
-                                        account.createdAt(),
-                                        now
-                                );
-
-                                return accountRepository.save(updatedAccount)
+                                return accountRepository.save(account.withPasswordHash(BcryptUtil.bcryptHash(command.newPassword()), now))
                                         .flatMap(saved -> authSessionRepository.revokeAllByAccountId(saved.id(), now)
-                                                .flatMap(ignored -> hashTokenRepository.deleteById(token.id())
-                                                        .replaceWith(new PasswordResetDetails(now))));
+                                                .flatMap(ignored -> hashTokenRepository.deleteById(token.id()))
+                                                .flatMap(ignored -> accountSecurityEventService.record(
+                                                        saved,
+                                                        AccountSecurityEventType.PASSWORD_CHANGED,
+                                                        "Password reset and active sessions revoked"
+                                                ))
+                                                .replaceWith(new PasswordResetResult(
+                                                        saved.id(),
+                                                        true,
+                                                        true,
+                                                        now
+                                                )));
                             });
                 });
     }

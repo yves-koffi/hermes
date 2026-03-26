@@ -9,6 +9,7 @@ import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.OffsetDateTime;
+import java.util.Locale;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -19,12 +20,13 @@ public class AccountCommandMapper {
         return new Account(
                 UUID.randomUUID(),
                 command.name(),
-                command.email(),
+                normalizeEmail(command.email()),
                 command.phoneNumber(),
                 BcryptUtil.bcryptHash(command.password()),
                 null,
                 null,
                 Provider.BASIC,
+                command.requiredVerifyEmail() ? null : now,
                 null,
                 now,
                 now
@@ -37,13 +39,14 @@ public class AccountCommandMapper {
         return new Account(
                 UUID.randomUUID(),
                 command.name(),
-                command.email(),
+                normalizeEmail(command.email()),
                 toPhoneNumber(command.prefix(), command.number()),
                 command.password() == null ? null : BcryptUtil.bcryptHash(command.password()),
                 command.avatarUrl(),
                 command.providerId(),
                 provider,
                 provider == Provider.BASIC ? null : now,
+                null,
                 now,
                 now
         );
@@ -54,5 +57,12 @@ public class AccountCommandMapper {
             return null;
         }
         return new PhoneNumber(prefix, number);
+    }
+
+    private String normalizeEmail(String email) {
+        if (email == null) {
+            return null;
+        }
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 }

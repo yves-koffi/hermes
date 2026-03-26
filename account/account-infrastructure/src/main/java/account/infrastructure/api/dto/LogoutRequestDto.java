@@ -1,6 +1,6 @@
 package account.infrastructure.api.dto;
 
-public record RefreshTokenRequest(
+public record LogoutRequestDto(
         String refreshToken
 ) {
 }

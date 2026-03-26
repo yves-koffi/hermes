@@ -21,4 +21,6 @@ public interface HashTokenRepository {
     Uni<Void> deleteById(UUID id);
 
     Uni<Void> deleteByAccountIdAndTokenTypes(UUID accountId, List<TokenType> tokenTypes);
+
+    Uni<Void> deleteByAccountId(UUID accountId);
 }

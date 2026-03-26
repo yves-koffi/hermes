@@ -1,7 +1,7 @@
 package account.application.usecase;
 
 import account.application.command.ResetPasswordCommand;
-import account.application.result.PasswordResetDetails;
+import account.application.result.PasswordResetResult;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -11,5 +11,5 @@ import io.smallrye.mutiny.Uni;
  * du compte puis invalide les sessions actives selon la politique de sécurité du module.
  */
 public interface ResetPasswordUseCase {
-    Uni<PasswordResetDetails> execute(ResetPasswordCommand command);
+    Uni<PasswordResetResult> execute(ResetPasswordCommand command);
 }

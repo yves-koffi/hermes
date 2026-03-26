@@ -1,7 +1,7 @@
 package account.application.usecase;
 
 import account.application.command.VerifyAccountCommand;
-import account.application.result.AccountVerificationDetails;
+import account.application.result.AccountVerificationResult;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -11,6 +11,6 @@ import io.smallrye.mutiny.Uni;
  * le compte associé. Ce flux finalise l'onboarding d'un compte basic avant le premier
  * usage complet de l'authentification.
  */
-public interface VerifyEmailUseCase {
-    Uni<AccountVerificationDetails> execute(VerifyAccountCommand command);
+public interface CheckVerifyEmailUseCase {
+    Uni<AccountVerificationResult> execute(VerifyAccountCommand command);
 }

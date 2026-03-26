@@ -1,7 +1,7 @@
 package account.application.usecase;
 
 import account.application.command.RegisterCommand;
-import account.application.result.RegisterDetails;
+import account.application.result.RegisterResult;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -12,5 +12,5 @@ import io.smallrye.mutiny.Uni;
  * au client de savoir si une étape de vérification est requise.
  */
 public interface RegisterUseCase {
-    Uni<RegisterDetails> execute(RegisterCommand command);
+    Uni<RegisterResult> execute(RegisterCommand command);
 }

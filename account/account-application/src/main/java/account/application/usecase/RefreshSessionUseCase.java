@@ -1,7 +1,7 @@
 package account.application.usecase;
 
 import account.application.command.RefreshSessionCommand;
-import account.application.result.AuthDetails;
+import account.application.result.AuthResult;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -12,5 +12,5 @@ import io.smallrye.mutiny.Uni;
  * central pour les clients web et mobile qui maintiennent des sessions longues.
  */
 public interface RefreshSessionUseCase {
-    Uni<AuthDetails> execute(RefreshSessionCommand command);
+    Uni<AuthResult> execute(RefreshSessionCommand command);
 }
