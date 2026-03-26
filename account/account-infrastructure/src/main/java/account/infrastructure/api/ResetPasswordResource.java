@@ -13,7 +13,6 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import org.jboss.resteasy.reactive.RestResponse;
 
-@Path("forgot-password")
 public class ResetPasswordResource {
 
     @Inject
@@ -24,14 +23,14 @@ public class ResetPasswordResource {
     AccountRequestMapper accountRequestMapper;
 
     @POST
-    @Path("")
+    @Path("forgot-password")
     public Uni<RestResponse<ForgetPasswordResult>> forgotPassword(ForgotPasswordRequestDto request) {
         return forgetPasswordUseCase.execute(accountRequestMapper.toCommand(request))
                 .map(RestResponse::ok);
     }
 
     @POST
-    @Path("")
+    @Path("reset-password")
     public Uni<RestResponse<PasswordResetResult>> resetPassword(ResetPasswordRequestDto request) {
         return resetPasswordUseCase.execute(accountRequestMapper.toCommand(request))
                 .map(RestResponse::ok);

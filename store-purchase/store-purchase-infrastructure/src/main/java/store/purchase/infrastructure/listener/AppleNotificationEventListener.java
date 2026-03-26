@@ -23,7 +23,7 @@ public class AppleNotificationEventListener {
 
     public Uni<Void> onAppleNotificationEvent(@ObservesAsync AppleNotificationEvent event) {
         if (event == null) {
-            LOGGER.warn("AppleNotificationEvent recu avec une valeur nulle.");
+            LOGGER.warn("AppleNotificationEvent reçu avec une valeur nulle.");
             return Uni.createFrom().voidItem();
         }
         Optional<PurchaseHandler<SignedDataVerifier, ReceiveAppleNotificationRequest>> handler = handlers.stream()
@@ -40,7 +40,7 @@ public class AppleNotificationEventListener {
         }
 
         LOGGER.info(
-                "AppleNotificationEvent recu: productId='{}', notificationType='{}'.",
+                "AppleNotificationEvent reçu: productId='{}', notificationType='{}'.",
                 event.product() != null ? event.product().getId() : null,
                 event.payload() != null ? event.payload().getNotificationType() : null
         );
